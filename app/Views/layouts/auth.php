@@ -25,7 +25,7 @@
   <body>
 		<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
 	    <div class="container">
-	    	<a class="navbar-brand" href="<?= base_url('/') ?>">Health<span>coach<i class="fa fa-leaf"></i></span></a>
+	    	<a class="navbar-brand" href="<?= base_url('/') ?>">Santé<span>coach<i class="fa fa-leaf"></i></span></a>
 	      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
 	        <span class="fa fa-bars"></span> Menu
 	      </button>
@@ -78,9 +78,9 @@
 				<div class="col-md-4 col-lg-5">
 					<div class="row">
 						<div class="col-md-12 col-lg-8 mb-md-0 mb-4">
-							<h2 class="footer-heading"><a href="#" class="logo">Health<span>coach</span></a></h2>
-							<p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
-							<a href="#">read more <span class="ion-ios-arrow-round-forward"></span></a>
+							<h2 class="footer-heading"><a href="#" class="logo">Santé<span>coach</span></a></h2>
+							<p>Un accompagnement simple pour mieux suivre votre santé au quotidien.</p>
+							<a href="#">en savoir plus <span class="ion-ios-arrow-round-forward"></span></a>
 						</div>
 					</div>
 				</div>
@@ -91,5 +91,6 @@
     <script src="<?= base_url('assets/js/jquery.min.js') ?>"></script>
     <script src="<?= base_url('assets/js/popper.min.js') ?>"></script>
     <script src="<?= base_url('assets/js/bootstrap.min.js') ?>"></script>
+		<?= $this->renderSection('scripts') ?>
   </body>
 </html>

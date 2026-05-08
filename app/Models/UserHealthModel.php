@@ -33,4 +33,11 @@ class UserHealthModel extends Model
             'numeric' => 'La taille doit être un nombre.',
         ],
     ];
+
+    public function getByUserId(int $userId): ?array
+    {
+        $health = $this->where('user_id', $userId)->first();
+
+        return $health ?: null;
+    }
 }

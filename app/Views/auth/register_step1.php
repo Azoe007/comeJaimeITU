@@ -96,3 +96,60 @@
 </div>
 
 <?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+	const emailInput = document.getElementById('email');
+	if (!emailInput) {
+		return;
+	}
+
+	const feedbackId = 'email-availability-feedback';
+	let timeoutId = null;
+
+	emailInput.addEventListener('input', function () {
+		clearTimeout(timeoutId);
+
+		const email = this.value.trim();
+		const existingFeedback = document.getElementById(feedbackId);
+
+		if (existingFeedback) {
+			existingFeedback.remove();
+		}
+
+		if (email.length < 4) {
+			this.classList.remove('is-invalid', 'is-valid');
+			return;
+		}
+
+		timeoutId = setTimeout(async () => {
+			try {
+				const response = await fetch('<?= base_url('register/check-email') ?>?email=' + encodeURIComponent(email), {
+					headers: {
+						'X-Requested-With': 'XMLHttpRequest'
+					}
+				});
+
+				const data = await response.json();
+				let feedback = document.getElementById(feedbackId);
+
+				if (!feedback) {
+					feedback = document.createElement('small');
+					feedback.id = feedbackId;
+					feedback.className = 'form-text';
+					emailInput.insertAdjacentElement('afterend', feedback);
+				}
+
+				feedback.textContent = data.message;
+				feedback.className = 'form-text ' + (data.available ? 'text-success' : 'text-danger');
+				emailInput.classList.toggle('is-valid', data.available);
+				emailInput.classList.toggle('is-invalid', !data.available);
+			} catch (error) {
+				console.error(error);
+			}
+		}, 400);
+	});
+});
+</script>
+<?= $this->endSection() ?>

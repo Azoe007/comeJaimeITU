@@ -33,4 +33,20 @@ class HealthHistoryModel extends Model
             'numeric' => 'La taille doit être un nombre.',
         ],
     ];
+
+    public function getHistoryByUserId(int $userId): array
+    {
+        return $this->where('user_id', $userId)
+            ->orderBy('created_at', 'ASC')
+            ->findAll();
+    }
+
+    public function getLatestByUserId(int $userId): ?array
+    {
+        $history = $this->where('user_id', $userId)
+            ->orderBy('created_at', 'DESC')
+            ->first();
+
+        return $history ?: null;
+    }
 }

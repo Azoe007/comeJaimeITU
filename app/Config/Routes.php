@@ -5,15 +5,19 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Auth::index');
+$routes->get('/', 'Home::index');
 
-$routes->get('/login', 'Auth::index');
-$routes->post('/login', 'Auth::login');
+$routes->group('', static function ($routes) {
+	$routes->get('login', 'Auth::index');
+	$routes->post('login', 'Auth::login');
 
-$routes->get('/register', 'Auth::register');
-$routes->post('/register/step1', 'Auth::registerStep1');
+	$routes->group('register', static function ($routes) {
+		$routes->get('/', 'Auth::register');
+		$routes->post('step1', 'Auth::registerStep1');
+		$routes->get('step2', 'Auth::registerStep2');
+		$routes->post('step2', 'Auth::processRegisterStep2');
+		$routes->get('check-email', 'Auth::checkEmail');
+	});
 
-$routes->get('/register/step2', 'Auth::registerStep2');
-$routes->post('/register/step2', 'Auth::processRegisterStep2');
-
-$routes->get('/logout', 'Auth::logout');
+	$routes->get('logout', 'Auth::logout');
+});

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Models\UserHealthModel;
+use App\Models\HealthHistoryModel;
 
 class UserModel extends Model
 {
@@ -60,6 +62,45 @@ class UserModel extends Model
                     ->join('role', 'users.role_id = role.id')
                     ->where('users.id', $id)
                     ->first();
+    }
+
+    public function getUserByEmail(string $email): ?array
+    {
+        $user = $this->where('email', $email)->first();
+
+        return $user ?: null;
+    }
+
+    public function createUserWithHealth(array $userData, array $healthData): ?int
+    {
+        $this->db->transBegin();
+
+        $this->insert($userData);
+        $userId = (int) $this->getInsertID();
+
+        if ($userId <= 0) {
+            $this->db->transRollback();
+
+            return null;
+        }
+
+        $healthPayload = array_merge($healthData, ['user_id' => $userId]);
+
+        $userHealthModel = new UserHealthModel();
+        $healthHistoryModel = new HealthHistoryModel();
+
+        $userHealthModel->insert($healthPayload);
+        $healthHistoryModel->insert($healthPayload);
+
+        if ($this->db->transStatus() === false) {
+            $this->db->transRollback();
+
+            return null;
+        }
+
+        $this->db->transCommit();
+
+        return $userId;
     }
 
 
