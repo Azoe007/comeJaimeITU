@@ -8,7 +8,7 @@ class UserModel extends Model
 {
     protected $table = 'users';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['nom', 'prenom', 'email', 'password', 'date_naissance', 'photo_profil', 'role_id'];
+    protected $allowedFields = ['nom', 'prenom', 'email', 'password', 'date_naissance', 'genre', 'role_id'];
     protected $useTimestamps = true;
     protected $returnType = 'array';
 
@@ -18,7 +18,7 @@ class UserModel extends Model
         'email' => 'required|valid_email|is_unique[users.email]',
         'password' => 'required|min_length[6]',
         'date_naissance' => 'required|valid_date',
-        'photo_profil' => 'max_length[255]',
+        'genre' => 'required|in_list[M,F,Autre]',
         'role_id' => 'required|integer',
     ];
 
@@ -44,8 +44,9 @@ class UserModel extends Model
             'required' => 'La date de naissance est requise.',
             'valid_date' => 'La date de naissance n\'est pas valide.',
         ],
-        'photo_profil' => [
-            'max_length' => 'La photo de profil ne doit pas dépasser 255 caractères.',
+        'genre' => [
+            'required' => 'Le genre est requis.',
+            'in_list' => 'Le genre doit être M, F ou Autre.',
         ],
         'role_id' => [
             'required' => 'Le rôle est requis.',
@@ -61,5 +62,5 @@ class UserModel extends Model
                     ->first();
     }
 
-    
+
 }

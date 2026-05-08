@@ -34,9 +34,9 @@ class CreateUsers extends Migration
             'date_naissance' => [
                 'type' => 'DATE',
             ],
-            'photo_profil' => [
+            'genre' => [
                 'type' => 'VARCHAR',
-                'constraint' => 255,
+                'constraint' => 50,
             ],
             'role_id' => [
                 'type' => 'INT',
