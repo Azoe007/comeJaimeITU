@@ -28,7 +28,7 @@ class StatutCodeModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = ['etat' => 'required|in_list[Valide,Utilise]'];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;

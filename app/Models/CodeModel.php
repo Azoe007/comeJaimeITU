@@ -28,7 +28,12 @@ class CodeModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = ['id_user' => 'required|integer',
+                                        'id_statut_code' => 'required|integer',
+                                        'type' => 'required|in_list[Promo,Gold],',
+                                        'valeur_en_ar' => 'required|numeric',
+                                        'code' => 'required|is_unique[codes.code]',
+                                        'date_usage' =>'required|valid_date'];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
