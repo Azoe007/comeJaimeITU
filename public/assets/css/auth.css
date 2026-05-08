@@ -1,0 +1,222 @@
+/* Auth Styles - Auto-generated from SCSS */
+/* Variables */
+/* Auth Section Styles */
+.auth-section {
+  padding: 80px 0;
+  min-height: 60vh;
+}
+
+.auth-section .wrapper {
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: white;
+  overflow: hidden;
+}
+
+.auth-section .contact-wrap h3 {
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: 28px;
+}
+
+.auth-section .contact-wrap .text-muted {
+  color: #6c757d;
+  font-size: 14px;
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group .label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="date"],
+.form-group input[type="number"],
+.form-group select,
+.form-group textarea {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 12px 15px;
+  font-size: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus,
+.form-group input[type="date"]:focus,
+.form-group input[type="number"]:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #13a06d;
+  box-shadow: 0 0 0 0.2rem rgba(19, 160, 109, 0.25);
+  outline: none;
+}
+
+.form-group input[type="text"].is-invalid,
+.form-group input[type="email"].is-invalid,
+.form-group input[type="password"].is-invalid,
+.form-group input[type="date"].is-invalid,
+.form-group input[type="number"].is-invalid,
+.form-group select.is-invalid,
+.form-group textarea.is-invalid {
+  border-color: #dc3545;
+}
+
+.form-group input[type="text"].is-invalid:focus,
+.form-group input[type="email"].is-invalid:focus,
+.form-group input[type="password"].is-invalid:focus,
+.form-group input[type="date"].is-invalid:focus,
+.form-group input[type="number"].is-invalid:focus,
+.form-group select.is-invalid:focus,
+.form-group textarea.is-invalid:focus {
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-group .form-control {
+  padding: 12px 15px;
+}
+
+.form-group .invalid-feedback {
+  color: #dc3545;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -5px;
+  margin-left: -5px;
+}
+
+.form-row > * {
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
+/* Button Styles */
+.btn {
+  border-radius: 4px;
+  padding: 12px 20px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(19, 160, 109, 0.25);
+}
+
+.btn.btn-primary {
+  background-color: #13a06d;
+  border-color: #13a06d;
+  color: white;
+}
+
+.btn.btn-primary:hover {
+  background-color: #0f8456;
+  border-color: #0f8456;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(19, 160, 109, 0.3);
+}
+
+.btn.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn.btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: white;
+}
+
+.btn.btn-secondary:hover {
+  background-color: #545b62;
+  border-color: #545b62;
+}
+
+.btn.btn-block {
+  display: block;
+  width: 100%;
+}
+
+/* Alert Styles */
+.alert {
+  border-radius: 4px;
+  border: 1px solid transparent;
+  padding: 12px 20px;
+  margin-bottom: 20px;
+}
+
+.alert.alert-danger {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+}
+
+.alert.alert-success {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  color: #155724;
+}
+
+.alert .close {
+  float: right;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1;
+  color: #000;
+  text-shadow: 0 1px 0 #fff;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.alert .close:hover {
+  opacity: 0.75;
+}
+
+/* Link Styles in Forms */
+a.text-primary {
+  color: #13a06d !important;
+  text-decoration: none;
+}
+
+a.text-primary:hover {
+  color: #0f8456 !important;
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .auth-section {
+    padding: 40px 0;
+    min-height: auto;
+  }
+
+  .auth-section .contact-wrap h3 {
+    font-size: 24px;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-row > * {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
