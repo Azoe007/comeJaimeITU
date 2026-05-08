@@ -1,0 +1,64 @@
+<?php
+
+namespace App\Database\Migrations;
+
+use CodeIgniter\Database\Migration;
+
+class CreateUsers extends Migration
+{
+    public function up()
+    {
+       $this->forge->addField([
+            'id' => [
+                'type' => 'INT',
+                'constraint' => 11,
+                'unsigned' => true,
+                'auto_increment' => true,
+            ],
+            'nom' => [
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+            ],
+            'prenom' => [
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+            ],
+            'email' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255,
+            ],
+            'password' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255,
+            ],
+            'date_naissance' => [
+                'type' => 'DATE',
+            ],
+            'photo_profil' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255,
+            ],
+            'role_id' => [
+                'type' => 'INT',
+                'constraint' => 11,
+                'unsigned' => true,
+            ],
+            'created_at' => [
+                'type' => 'DATETIME',
+                'null' => true,
+            ],
+            'updated_at' => [
+                'type' => 'DATETIME',
+                'null' => true,
+            ],
+        ]);
+        $this->forge->addKey('id', true);
+        $this->forge->addForeignKey('role_id', 'role', 'id', 'CASCADE', 'CASCADE');     
+        $this->forge->createTable('users');
+    }
+
+    public function down()
+    {
+        $this->forge->dropTable('users');
+    }
+}
