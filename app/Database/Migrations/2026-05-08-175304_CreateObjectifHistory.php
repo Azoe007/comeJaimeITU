@@ -31,6 +31,9 @@ class CreateObjectifHistory extends Migration
             'taille_cm' => [
                 'type' => 'FLOAT',
             ],
+            'poids_objectif' => [
+                'type' => 'FLOAT',
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,
