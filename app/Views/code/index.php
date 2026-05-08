@@ -22,7 +22,7 @@
             <td><?= number_format($c['valeur_en_ar'], 0, ',', ' ') ?> Ar</td>
             <td><?= $c['type'] ?></td>
             <td>
-                <a href="<?= base_url('wallet') ?>" class="btn btn-sm btn-primary">Utiliser</a>
+                <a href="<?= base_url('wallet') ?>" class="btn btn-sm btn-primary">Copier et Utiliser</a>
             </td>
         </tr>
         <?php endforeach; ?>

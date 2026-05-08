@@ -106,4 +106,36 @@ public function recharger()
         return redirect()->back()->with('error', 'Erreur lors du rechargement.');
     }
 }
+
+public function acheter_gold()
+{
+    $id_user = session()->get('user_id');
+    $prixGold = 25000; // nataoko static aloha ilay prix
+
+    $walletModel = new \App\Models\WalletModel();
+    $userModel = new \App\Models\UserModel(); 
+
+    $wallet = $walletModel->where('id_user', $id_user)->first();
+
+    if (!$wallet || $wallet['solde'] < $prixGold) {
+        return redirect()->back()->with('error', 'Solde insuffisant. Veuillez recharger votre compte.');
+    }
+
+    try {
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        $walletModel->retirer_solde($id_user, $prixGold);
+
+        $userModel->update($id_user, ['est_gold' => 1]);
+
+        session()->set('is_gold', true);
+
+        $db->transComplete();
+        return redirect()->to('/wallet')->with('success', 'Félicitations ! Vous êtes maintenant Membre Gold.');
+
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Une erreur est survenue.Verifier votre solde.');
+    }
+}
 }

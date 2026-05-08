@@ -20,4 +20,12 @@ $routes->group('', static function ($routes) {
 	});
 
 	$routes->get('logout', 'Auth::logout');
+
+	// portefeuille
+	$routes->get('wallet', 'WalletController::index');
+	$routes->post('wallet/recharger', 'WalletController::ajouter_solde');
+	$routes->post('wallet/acheterGold', 'WalletController::acheterGold');
+	
+	//code
+	$routes->get('codes', 'CodeController::index');
 });
