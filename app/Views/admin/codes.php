@@ -22,9 +22,34 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>HC-1000-A</td><td>10 000 Ar</td><td><span class="status-pill status-ok">Disponible</span></td><td>-</td></tr>
-                    <tr><td>HC-2500-B</td><td>25 000 Ar</td><td><span class="status-pill status-warn">Utilise</span></td><td>Rakoto Jaime</td></tr>
-                    <tr><td>HC-5000-C</td><td>50 000 Ar</td><td><span class="status-pill status-danger">Bloque</span></td><td>-</td></tr>
+                    <?php foreach (($codes ?? []) as $c): ?>
+                        <?php
+                            $statusClass = 'status-ok';
+                            $statusLabel = 'Disponible';
+                            if ((int) $c['id_statut_code'] === 2) {
+                                $statusClass = 'status-warn';
+                                $statusLabel = 'Utilise';
+                            } elseif ((int) $c['id_statut_code'] === 3) {
+                                $statusClass = 'status-danger';
+                                $statusLabel = 'Bloque';
+                            }
+                            $userLabel = trim(($c['prenom'] ?? '') . ' ' . ($c['nom'] ?? ''));
+                            if ($userLabel === '') {
+                                $userLabel = '-';
+                            }
+                        ?>
+                        <tr>
+                            <td><code><?= esc($c['code']) ?></code></td>
+                            <td><?= number_format((float) $c['valeur_en_ar'], 0, ',', ' ') ?> Ar</td>
+                            <td><span class="status-pill <?= $statusClass ?>"><?= $statusLabel ?></span></td>
+                            <td><?= esc($userLabel) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    <?php if (empty($codes ?? [])): ?>
+                        <tr>
+                            <td colspan="4">Aucun code pour le moment.</td>
+                        </tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>

@@ -16,6 +16,12 @@
     $selectedGenre = (string) old('genre', $account['genre'] ?? '', 'raw');
 ?>
 
+<?php if ($user['gold']): ?>
+    <div class="container">
+        <div class="alert-box alert-success">Utilisateur Gold</div>
+    </div>
+<?php endif; ?>
+
 <section class="page-hero compact">
     <div class="container page-hero-inner" data-reveal="up">
         <div>

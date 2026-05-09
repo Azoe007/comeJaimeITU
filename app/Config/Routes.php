@@ -26,6 +26,7 @@ $routes->get('plans', static function () {
 });
 $routes->get('wallet', 'WalletController::index');
 $routes->post('wallet/recharger', 'WalletController::recharger');
+$routes->post('wallet/acheterGold', 'WalletController::acheterGold');
 $routes->get('code', 'CodeController::index');
 
 
@@ -58,14 +59,7 @@ $routes->group('admin', static function ($routes) {
             'activeMenu' => 'sports',
         ]);
     });
-    $routes->get('codes', static function () {
-        return view('admin/codes', [
-            'pageTitle' => 'Validation des codes - Health Coach',
-            'pageHeading' => 'Validation des codes',
-            'breadcrumb' => 'Codes',
-            'activeMenu' => 'codes',
-        ]);
-    });
+    $routes->get('codes', 'CodeController::adminIndex');
     $routes->get('settings', static function () {
         return view('admin/settings', [
             'pageTitle' => 'Parametres - Health Coach',
@@ -90,11 +84,11 @@ $routes->group('', static function ($routes) {
 
 	$routes->get('logout', 'Auth::logout');
 
-	// portefeuille
-	$routes->get('wallet', 'WalletController::index');
-	$routes->post('wallet/recharger', 'WalletController::ajouter_solde');
-	$routes->post('wallet/acheterGold', 'WalletController::acheterGold');
+    // portefeuille
+    $routes->get('wallet', 'WalletController::index');
+    $routes->post('wallet/recharger', 'WalletController::recharger');
+    $routes->post('wallet/acheterGold', 'WalletController::acheterGold');
 	
-	//code
-	$routes->get('codes', 'CodeController::index');
+    //code
+    $routes->get('codes', 'CodeController::index');
 });

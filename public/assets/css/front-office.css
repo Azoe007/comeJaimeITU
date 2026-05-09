@@ -160,6 +160,86 @@ p { margin: 0; line-height: 1.7; color: rgba(47, 54, 64, 0.82); }
 }
 .stat-card, .mini-card, .wallet-balance { padding: 1.2rem; }
 .stat-card strong, .wallet-balance strong, .bmi-card strong { display: block; font-size: 1.8rem; color: var(--front-secondary); }
+.header-right {
+    width: min(1120px, calc(100% - 2rem));
+    margin: 2.5rem auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+}
+.header-right .badge {
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    box-shadow: 0 10px 24px rgba(39, 60, 117, 0.18);
+}
+.header-right .ms-3 {
+    margin-left: 0;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(39, 60, 117, 0.08);
+    color: var(--front-secondary);
+    font-weight: 700;
+}
+.header-right .btn-warning {
+    background: rgba(230, 126, 34, 0.16);
+    color: var(--front-secondary);
+    border-radius: 999px;
+    padding: 0.55rem 1rem;
+    font-weight: 800;
+}
+.header-right .btn-warning:hover { background: rgba(230, 126, 34, 0.24); }
+.header-right + .card {
+    width: min(720px, calc(100% - 2rem));
+    margin: 0 auto 4rem;
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid var(--front-border);
+    box-shadow: var(--front-shadow);
+}
+.header-right + .card .card-body {
+    padding: 2rem;
+    display: grid;
+    gap: 1rem;
+}
+.header-right + .card h5 {
+    margin: 0;
+    font-size: 1.35rem;
+    color: var(--front-secondary);
+}
+.header-right + .card hr {
+    border: 0;
+    height: 1px;
+    background: var(--front-border);
+    margin: 0.4rem 0 0.6rem;
+}
+.header-right + .card .form-group { display: grid; gap: 0.45rem; }
+.header-right + .card .form-group label { font-weight: 700; color: var(--front-secondary); }
+.header-right + .card .form-control {
+    width: 100%;
+    padding: 0.95rem 1rem;
+    border: 1px solid rgba(39, 60, 117, 0.16);
+    border-radius: 16px;
+    background: #fff;
+}
+.header-right + .card .form-control:focus {
+    outline: none;
+    border-color: var(--front-primary);
+    box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.12);
+}
+.header-right + .card .mt-2 { margin-top: 0.75rem; }
+.header-right + .card .btn-success {
+    background: var(--front-primary);
+    color: #0f2f1d;
+    border-radius: 18px;
+    padding: 0.85rem 1.2rem;
+    font-weight: 800;
+    box-shadow: 0 16px 30px rgba(46, 204, 113, 0.24);
+}
+.header-right + .card .btn-success:hover { transform: translateY(-2px); }
 .hero-visual { display: grid; gap: 1rem; }
 .bmi-card { padding: 2rem; }
 .floating { animation: float 4s ease-in-out infinite; }
@@ -525,4 +605,8 @@ p { margin: 0; line-height: 1.7; color: rgba(47, 54, 64, 0.82); }
     .site-nav.is-open { display: flex; }
     .nav-toggle { display: block; }
     .header-user { display: none; }
+}
+@media (max-width: 700px) {
+    .header-right { justify-content: flex-start; }
+    .header-right + .card .card-body { padding: 1.5rem; }
 }

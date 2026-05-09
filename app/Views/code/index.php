@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,6 +33,8 @@
 </body>
 </html>
 =======
+=======
+>>>>>>> gold
 <?= $this->extend('layouts/back') ?>
 <?= $this->section('content') ?>
 
@@ -76,4 +79,11 @@
 </section>
 
 <?= $this->endSection() ?>
+<<<<<<< HEAD
 >>>>>>> 1e02d9c8cf3a64feead10a16f243716aaa72111d
+=======
+<<<<<<< Updated upstream
+>>>>>>> e36906429cee746dd6360b099d23bbcf23329423
+=======
+>>>>>>> Stashed changes
+>>>>>>> gold

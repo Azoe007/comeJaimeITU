@@ -18,32 +18,33 @@ class WalletController extends BaseController
 
     public function ajouter_solde()
     {
-        $id_user = session()->get('user_id');
         $montant = (int) $this->request->getPost('montant');
 
         if ($montant <= 0) {
             return redirect()->back()->withInput()->with('error', 'Le montant doit être supérieur à zéro.');
         }
 
-        $walletModel = new \App\Models\WalletModel();
-        $walletModel->ajouter_solde($id_user, $montant);
+        $balance = (int) session()->get('demo_wallet_balance');
+        $balance += $montant;
+        session()->set('demo_wallet_balance', $balance);
 
         return redirect()->back()->with('success', 'Solde ajouté avec succès.');
     }
 
     public function retirer_solde()
     {
-        $id_user = session()->get('user_id');
         $montant = (int) $this->request->getPost('montant');
 
         if ($montant <= 0) {
             return redirect()->back()->withInput()->with('error', 'Le montant doit être supérieur à zéro.');
         }
 
-        $walletModel = new \App\Models\WalletModel();
-        $result = $walletModel->retirer_solde($id_user, $montant);
+        $balance = (int) session()->get('demo_wallet_balance');
+        $result = $balance >= $montant;
 
         if ($result) {
+            $balance -= $montant;
+            session()->set('demo_wallet_balance', $balance);
             return redirect()->back()->with('success', 'Solde retiré avec succès.');
         } else {
             return redirect()->back()->with('error', 'Solde insuffisant pour effectuer cette opération.');
@@ -53,89 +54,104 @@ class WalletController extends BaseController
 
 public function index()
 {
-    $id_user = session()->get('user_id');
-    $walletModel = new \App\Models\WalletModel();
-    $monPortefeuille = $walletModel->where('id_user', $id_user)->first();
+    $balance = session()->get('demo_wallet_balance');
+    if ($balance === null) {
+        $balance = 15000;
+        session()->set('demo_wallet_balance', $balance);
+    }
+
+    $transactions = session()->get('demo_wallet_transactions');
+    if (!is_array($transactions)) {
+        $transactions = [
+            ['label' => 'Recharge par code HLT-2026-90', 'amount' => '+10 000 Ar', 'status' => 'Valide'],
+            ['label' => 'Achat regime prise de masse 30 jours', 'amount' => '-22 000 Ar', 'status' => 'Debite'],
+        ];
+        session()->set('demo_wallet_transactions', $transactions);
+    }
 
     $data = [
         'pageTitle'   => 'Portefeuille - Health Coach',
         'pageHeading' => 'Portefeuille',
         'breadcrumb'  => 'Portefeuille',
         // Si le wallet n'existe pas encore, on met 0 par défaut
-        'solde'       => $monPortefeuille ? $monPortefeuille['solde'] : 0, 
+        'solde'       => $balance,
+        'transactions' => $transactions,
     ];
     return view('wallet/index', $data);
 }
 
+    public function acheterGold()
+    {
+        if ((bool) session()->get('is_gold')) {
+            return redirect()->to('/wallet')->with('success', 'Votre compte est deja Gold.');
+        }
+
+        $price = 30000;
+        $balance = (int) session()->get('demo_wallet_balance');
+        if ($balance < $price) {
+            return redirect()->to('/wallet')->with('error', 'Solde insuffisant pour devenir Gold.');
+        }
+
+        $balance -= $price;
+        session()->set('demo_wallet_balance', $balance);
+        session()->set('is_gold', true);
+
+        $transactions = session()->get('demo_wallet_transactions');
+        if (!is_array($transactions)) {
+            $transactions = [];
+        }
+        $transactions[] = [
+            'label' => 'Activation Gold',
+            'amount' => '-' . number_format((float) $price, 0, ',', ' ') . ' Ar',
+            'status' => 'Valide',
+        ];
+        session()->set('demo_wallet_transactions', $transactions);
+
+        return redirect()->to('/wallet')->with('success', 'Felicitation, votre compte est Gold.');
+    }
+
 public function recharger()
 {
-    $codeSaisi = $this->request->getPost('code_recharge');
-    $id_user = session()->get('user_id');
+    $codeSaisi = strtoupper(trim((string) $this->request->getPost('code_recharge')));
+    $demoCodes = [
+        'HLT-2026-90' => 10000,
+        'HC-1000-A' => 10000,
+        'HC-2500-B' => 25000,
+        'HC-5000-C' => 50000,
+    ];
 
-    $codeModel = new \App\Models\CodeModel();
-    $walletModel = new \App\Models\WalletModel();
-
-    // 1. Vérifier si le code existe et est disponible
-    $codeData = $codeModel->where('code', $codeSaisi)
-                          ->where('id_statut_code', 1)
-                          ->first();
-
-    if (!$codeData) {
+    if (!array_key_exists($codeSaisi, $demoCodes)) {
         return redirect()->back()->with('error', 'Code invalide ou déjà utilisé.');
     }
 
-    // 2. Logique de mise à jour
-    try {
-        $db = \Config\Database::connect();
-        $db->transStart();
-
-        // Créditer le portefeuille
-        $walletModel->ajouter_solde($id_user, $codeData['valeur_en_ar']);
-
-        // Marquer le code comme utilisé (Statut 2)
-        $codeModel->update($codeData['id'], [
-            'id_user'        => $id_user,
-            'id_statut_code' => 2,
-            'date_usage'     => date('Y-m-d H:i:s')
-        ]);
-
-        $db->transComplete();
-        return redirect()->to('/wallet')->with('success', 'Votre compte a été crédité de ' . $codeData['valeur_en_ar'] . ' Ar');
-
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Erreur lors du rechargement.');
-    }
-}
-
-public function acheter_gold()
-{
-    $id_user = session()->get('user_id');
-    $prixGold = 25000; // nataoko static aloha ilay prix
-
-    $walletModel = new \App\Models\WalletModel();
-    $userModel = new \App\Models\UserModel(); 
-
-    $wallet = $walletModel->where('id_user', $id_user)->first();
-
-    if (!$wallet || $wallet['solde'] < $prixGold) {
-        return redirect()->back()->with('error', 'Solde insuffisant. Veuillez recharger votre compte.');
+    $usedCodes = session()->get('demo_used_codes');
+    if (!is_array($usedCodes)) {
+        $usedCodes = [];
     }
 
-    try {
-        $db = \Config\Database::connect();
-        $db->transStart();
-
-        $walletModel->retirer_solde($id_user, $prixGold);
-
-        $userModel->update($id_user, ['est_gold' => 1]);
-
-        session()->set('is_gold', true);
-
-        $db->transComplete();
-        return redirect()->to('/wallet')->with('success', 'Félicitations ! Vous êtes maintenant Membre Gold.');
-
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Une erreur est survenue.Verifier votre solde.');
+    if (in_array($codeSaisi, $usedCodes, true)) {
+        return redirect()->back()->with('error', 'Code invalide ou déjà utilisé.');
     }
+
+    $amount = $demoCodes[$codeSaisi];
+    $balance = (int) session()->get('demo_wallet_balance');
+    $balance += $amount;
+    session()->set('demo_wallet_balance', $balance);
+
+    $transactions = session()->get('demo_wallet_transactions');
+    if (!is_array($transactions)) {
+        $transactions = [];
+    }
+    $transactions[] = [
+        'label' => 'Recharge par code ' . $codeSaisi,
+        'amount' => '+' . number_format((float) $amount, 0, ',', ' ') . ' Ar',
+        'status' => 'Valide',
+    ];
+    session()->set('demo_wallet_transactions', $transactions);
+
+    $usedCodes[] = $codeSaisi;
+    session()->set('demo_used_codes', $usedCodes);
+
+    return redirect()->to('/wallet')->with('success', 'Votre compte a été crédité de ' . $amount . ' Ar');
 }
 }
