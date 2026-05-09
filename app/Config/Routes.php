@@ -6,11 +6,19 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 $routes->get('/', 'Home::index');
+$routes->get('objectif/diagnostic', 'ObjectifController::diagnostic');
+$routes->post('objectif/diagnostic', 'ObjectifController::saveDiagnostic');
+$routes->get('objectif/intention', 'ObjectifController::intention');
+$routes->post('objectif/intention', 'ObjectifController::saveIntention');
+$routes->get('suggestion', 'SuggestionController::index');
+$routes->get('suggestion/(:num)', 'SuggestionController::detail/$1');
 $routes->get('profile', static function () {
     return view('profile/index', [
         'pageTitle' => 'Mon Profil - Health Coach',
     ]);
 });
+$routes->get('profile', 'ProfileController::index');
+$routes->post('profile', 'ProfileController::update');
 $routes->get('plans', static function () {
     return view('plans/index', [
         'pageTitle' => 'Suggestions de regimes - Health Coach',
