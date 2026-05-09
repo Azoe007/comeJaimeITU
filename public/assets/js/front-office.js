@@ -23,9 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const taille = form.querySelector('#taille');
         const poids = form.querySelector('#poids');
-        const imcValue = form.querySelector('[data-imc-value]');
-        const imcLabel = form.querySelector('[data-imc-label]');
-        const imcFill = form.closest('section, .content-section, .container')?.querySelector('[data-imc-fill]') || document.querySelector('[data-imc-fill]');
+        const scope = form.closest('.tunnel-grid') || form.closest('.content-section') || form.closest('section') || document;
+        const imcValue = scope.querySelector('[data-imc-value]');
+        const imcLabel = scope.querySelector('[data-imc-label]');
+        const imcFill = scope.querySelector('[data-imc-fill]') || document.querySelector('[data-imc-fill]');
 
         if (!taille || !poids || !imcValue || !imcLabel) return;
 

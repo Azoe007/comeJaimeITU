@@ -56,11 +56,12 @@ class ObjectifController extends BaseController
         return redirect()->to(base_url('objectif/intention'));
     }
 
-    public function intention(): string
+    public function intention() 
     {
         $funnel = session('objectif_funnel') ?? [];
 
         if (empty($funnel['genre']) || empty($funnel['taille']) || empty($funnel['poids'])) {
+            
             return redirect()->to(base_url('objectif/diagnostic'));
         }
 

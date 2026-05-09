@@ -33,7 +33,7 @@
                         <?php
                             $name = (string) ($objectif['nom'] ?? '');
                             $lower = strtolower($name);
-                            $type = str_contains($lower, 'redu') ? 'reduire' : (str_contains($lower, 'augment') || str_contains($lower, 'gain') ? 'augmenter' : 'ideal');
+                            $type = str_contains($lower, 'rédu') ? 'reduire' : (str_contains($lower, 'augment') || str_contains($lower, 'gain') ? 'augmenter' : 'ideal');
                             $isSelected = (string) ($selectedObjectif ?? '') === (string) $objectif['id'];
                             $descriptions = [
                                 'reduire' => 'Programme oriente perte de poids avec duree ciblee et activite associee.',
@@ -44,7 +44,7 @@
                         <label class="objective-card <?= $isSelected ? 'is-selected' : '' ?>" data-goal-card data-goal-type="<?= esc($type) ?>">
                             <input type="radio" name="objectif_id" value="<?= esc((string) $objectif['id']) ?>" <?= $isSelected ? 'checked' : '' ?> required>
                             <span class="objective-title"><?= esc($name) ?></span>
-                            <span class="objective-text"><?= esc($descriptions[$type]) ?></span>
+                            <span class="objective-text"><?= esc((string)$descriptions[$type]) ?></span>
                         </label>
                     <?php endforeach; ?>
                 </div>

@@ -410,6 +410,13 @@ p { margin: 0; line-height: 1.7; color: rgba(47, 54, 64, 0.82); }
     color: rgba(47, 54, 64, 0.54);
     text-decoration: line-through;
 }
+.tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+.tag-row .card-tag { margin-bottom: 0; }
 .goal-chip {
     padding: 0.9rem 1rem;
     border-radius: 999px;
@@ -424,6 +431,19 @@ p { margin: 0; line-height: 1.7; color: rgba(47, 54, 64, 0.82); }
 .price-box strong, .price-box span { display: block; }
 .price-box strong { font-size: 1.4rem; color: var(--front-secondary); }
 .price-box span { color: var(--front-accent); font-weight: 800; }
+.compact-list .list-item {
+    padding: 0.85rem 1rem;
+}
+.suggestion-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.suggestion-list-card {
+    display: flex;
+    flex-direction: column;
+}
+.suggestion-list-card .btn {
+    margin-top: auto;
+}
 .macro-bar {
     display: grid;
     gap: 0.6rem;
@@ -435,6 +455,10 @@ p { margin: 0; line-height: 1.7; color: rgba(47, 54, 64, 0.82); }
     background: rgba(39, 60, 117, 0.08);
     color: var(--front-secondary);
     font-weight: 700;
+}
+.detail-macros {
+    margin-top: 1.4rem;
+    margin-bottom: 0;
 }
 .site-footer {
     margin-top: auto;
@@ -483,7 +507,7 @@ p { margin: 0; line-height: 1.7; color: rgba(47, 54, 64, 0.82); }
 @media (max-width: 900px) {
     .hero-grid, .card-grid, .split-panel, .auth-grid, .plans-grid, .page-hero-inner, .gold-panel, .footer-grid { grid-template-columns: 1fr; }
     .profile-card { grid-column: auto; }
-    .hero-grid, .card-grid, .split-panel, .auth-grid, .plans-grid, .page-hero-inner, .gold-panel, .footer-grid, .tunnel-grid, .objective-grid, .price-offer { grid-template-columns: 1fr; }
+    .hero-grid, .card-grid, .split-panel, .auth-grid, .plans-grid, .page-hero-inner, .gold-panel, .footer-grid, .tunnel-grid, .objective-grid, .price-offer, .suggestion-grid { grid-template-columns: 1fr; }
     .hero-stats, .field-grid { grid-template-columns: 1fr; }
     .site-nav {
         display: none;
