@@ -16,6 +16,8 @@ $routes->get('profile', static function () {
         'pageTitle' => 'Mon Profil - Health Coach',
     ]);
 });
+$routes->get('profile', 'ProfileController::index');
+$routes->post('profile', 'ProfileController::update');
 $routes->get('plans', static function () {
     return view('plans/index', [
         'pageTitle' => 'Suggestions de regimes - Health Coach',
