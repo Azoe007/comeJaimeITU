@@ -179,6 +179,23 @@ p { margin: 0; line-height: 1.7; color: rgba(47, 54, 64, 0.82); }
 .content-section { padding: 1.5rem 0 4rem; }
 .card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .feature-card, .plan-card { padding: 2rem; }
+.profile-card { grid-column: span 2; }
+.profile-ajax-alerts:empty { display: none; }
+.profile-form-section {
+    display: grid;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--front-border);
+}
+.profile-form-section:first-of-type {
+    padding-top: 0;
+    border-top: 0;
+}
+.profile-form-section h3 {
+    margin: 0;
+    color: var(--front-secondary);
+    font-size: 1rem;
+}
 .gold-section { padding: 0 0 3rem; }
 .gold-panel {
     display: grid;
@@ -287,7 +304,9 @@ p { margin: 0; line-height: 1.7; color: rgba(47, 54, 64, 0.82); }
 }
 .field-error, .field-hint { font-size: 0.85rem; }
 .field-error, .hint-danger { color: #c0392b; }
+.field-error:empty { display: none; }
 .hint-success { color: #13824c; }
+.btn:disabled { opacity: 0.65; cursor: wait; transform: none; }
 .form-footnote { margin-top: 1.25rem; text-align: center; }
 .form-footnote a { color: var(--front-secondary); font-weight: 700; }
 .alert-box {
@@ -463,11 +482,8 @@ p { margin: 0; line-height: 1.7; color: rgba(47, 54, 64, 0.82); }
 }
 @media (max-width: 900px) {
     .hero-grid, .card-grid, .split-panel, .auth-grid, .plans-grid, .page-hero-inner, .gold-panel, .footer-grid { grid-template-columns: 1fr; }
-<<<<<<< HEAD
     .profile-card { grid-column: auto; }
     .hero-grid, .card-grid, .split-panel, .auth-grid, .plans-grid, .page-hero-inner, .gold-panel, .footer-grid, .tunnel-grid, .objective-grid, .price-offer { grid-template-columns: 1fr; }
-=======
->>>>>>> parent of ee75a96 (page profil)
     .hero-stats, .field-grid { grid-template-columns: 1fr; }
     .site-nav {
         display: none;
