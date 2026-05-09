@@ -9,7 +9,7 @@ class ObjectifHistoryModel extends Model
     protected $table = 'objectif_history';
     protected $primaryKey = 'id';
     protected $allowedFields = ['id_user', 'id_objectif', 'poids_kg', 'taille_cm', 'created_at'];
-    protected $useTimestamps = false; // Géré manuellement via created_at
+    protected $useTimestamps = false; 
 
     protected $validationRules = [
         'id_user'     => 'required|integer',
