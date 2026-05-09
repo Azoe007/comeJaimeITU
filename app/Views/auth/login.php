@@ -1,47 +1,36 @@
 <?= $this->extend('layouts/auth') ?>
 <?= $this->section('content') ?>
 
-<div class="col-md-8 col-lg-6">
-	<div class="wrapper">
-		<div class="contact-wrap w-100 p-md-5 p-4">
-			<h3 class="mb-4">Connectez-vous à votre compte</h3>
-			<?php if (session()->has('error')): ?>
-				<div class="alert alert-danger alert-dismissible fade show" role="alert">
-					<?= session('error') ?>
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-			<?php endif; ?>
-			
-			<form method="POST" action="<?= base_url('login') ?>">
-				<?= csrf_field() ?>
-				<div class="form-group">
-				<label class="label" for="email">Adresse email</label>
-				<input type="email" class="form-control <?= session('errors.email') ? 'is-invalid' : '' ?>" name="email" id="email" placeholder="Entrez votre email" required value="<?= old('email') ?>">
-					<?php if (session('errors.email')): ?>
-						<div class="invalid-feedback d-block"><?= session('errors.email') ?></div>
-					<?php endif; ?>
-				</div>
-				
-				<div class="form-group">
-				<label class="label" for="password">Mot de passe</label>
-				<input type="password" class="form-control <?= session('errors.password') ? 'is-invalid' : '' ?>" name="password" id="password" placeholder="Entrez votre mot de passe" required>
-					<?php if (session('errors.password')): ?>
-						<div class="invalid-feedback d-block"><?= session('errors.password') ?></div>
-					<?php endif; ?>
-				</div>
-				
-				<div class="form-group">
-				<input type="submit" value="Connexion" class="btn btn-primary btn-block">
-				</div>
-			</form>
-			
-			<p class="text-center mt-3">
-				Vous n'avez pas de compte ? <a href="<?= base_url('register') ?>" class="text-primary">Inscrivez-vous ici</a>
-			</p>
-		</div>
-	</div>
+<div class="form-shell">
+    <div class="form-heading">
+        <span class="step-pill">Connexion</span>
+        <h2>Accedez a votre espace nutrition</h2>
+        <p>Retrouvez votre profil, votre porte-monnaie et vos programmes actifs.</p>
+    </div>
+
+    <?php if (session()->has('error')): ?>
+        <div class="alert-box alert-danger"><?= session('error') ?></div>
+    <?php endif; ?>
+
+    <form method="POST" action="<?= base_url('login') ?>" class="smart-form">
+        <?= csrf_field() ?>
+
+        <label class="field">
+            <span>Adresse email</span>
+            <input type="email" name="email" value="<?= old('email') ?>" required>
+            <?php if (session('errors.email')): ?><small class="field-error"><?= session('errors.email') ?></small><?php endif; ?>
+        </label>
+
+        <label class="field">
+            <span>Mot de passe</span>
+            <input type="password" name="password" required>
+            <?php if (session('errors.password')): ?><small class="field-error"><?= session('errors.password') ?></small><?php endif; ?>
+        </label>
+
+        <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+    </form>
+
+    <p class="form-footnote">Pas encore de compte ? <a href="<?= base_url('register') ?>">Commencer l'inscription</a></p>
 </div>
 
 <?= $this->endSection() ?>
