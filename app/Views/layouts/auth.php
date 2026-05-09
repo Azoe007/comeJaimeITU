@@ -64,6 +64,33 @@
         </section>
     </main>
 
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div>
+                <a class="brand footer-brand" href="<?= base_url('/') ?>">
+                    <span class="brand-mark">HC</span>
+                    <span class="brand-copy">
+                        <strong>Health Coach</strong>
+                        <small>Acces simple aux programmes alimentaires</small>
+                    </span>
+                </a>
+                <p>Parcours d'inscription en plusieurs etapes avec une presentation plus claire des objectifs et du suivi sante.</p>
+            </div>
+            <div class="footer-links">
+                <strong>Acces rapide</strong>
+                <a href="<?= base_url('/') ?>">Accueil</a>
+                <a href="<?= base_url('register') ?>">Inscription</a>
+                <a href="<?= base_url('login') ?>">Connexion</a>
+            </div>
+            <div class="footer-links">
+                <strong>Fonctionnalites</strong>
+                <span>IMC</span>
+                <span>Objectifs personnalises</span>
+                <span>Regimes avec remise Gold</span>
+            </div>
+        </div>
+    </footer>
+
     <script src="<?= base_url('assets/js/front-office.js') ?>"></script>
     <?= $this->renderSection('scripts') ?>
 </body>

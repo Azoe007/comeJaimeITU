@@ -56,6 +56,33 @@
         <?= $this->renderSection('content') ?>
     </main>
 
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div>
+                <a class="brand footer-brand" href="<?= base_url('/') ?>">
+                    <span class="brand-mark">HC</span>
+                    <span class="brand-copy">
+                        <strong>Health Coach</strong>
+                        <small>Nutrition, IMC et objectifs durables</small>
+                    </span>
+                </a>
+                <p>Une interface pensee pour guider l'utilisateur entre bilan, objectifs, recommandations et suivi du porte-monnaie.</p>
+            </div>
+            <div class="footer-links">
+                <strong>Navigation</strong>
+                <a href="<?= base_url('/') ?>">Accueil</a>
+                <a href="<?= base_url('plans') ?>">Regimes</a>
+                <a href="<?= base_url('wallet') ?>">Porte-monnaie</a>
+            </div>
+            <div class="footer-links">
+                <strong>Avantages</strong>
+                <span>IMC instantane</span>
+                <span>Export PDF</span>
+                <span>Option Gold -15%</span>
+            </div>
+        </div>
+    </footer>
+
     <script src="<?= base_url('assets/js/front-office.js') ?>"></script>
     <?= $this->renderSection('scripts') ?>
 </body>
