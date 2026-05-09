@@ -26,3 +26,5 @@
 # Ignorer les fichiers de base de donnees s'ils sont dans writable.
 /writable/**/*.db
 /writable/**/*.sqlite
+
+ todoFlo
