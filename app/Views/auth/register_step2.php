@@ -1,55 +1,50 @@
 <?= $this->extend('layouts/auth') ?>
 <?= $this->section('content') ?>
 
-<div class="col-md-8 col-lg-6">
-	<div class="wrapper">
-		<div class="contact-wrap w-100 p-md-5 p-4">
-<h3 class="mb-4">Complétez votre profil</h3>
-		<p class="text-muted mb-4"><small>Étape 2 sur 2 : Informations de santé</small></p>
-			
-			<?php if (session()->has('error')): ?>
-				<div class="alert alert-danger alert-dismissible fade show" role="alert">
-					<?= session('error') ?>
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-			<?php endif; ?>
-			
-			<form method="POST" action="<?= base_url('register/step2') ?>">
-				<?= csrf_field() ?>
-				
-				<div class="form-row">
-					<div class="form-group col-md-6">
-					<label class="label" for="taille">Taille (cm)</label>
-					<input type="number" step="0.01" class="form-control <?= session('errors.taille') ? 'is-invalid' : '' ?>" name="taille" id="taille" placeholder="Taille en cm" required value="<?= old('taille') ?>">
-						<?php if (session('errors.taille')): ?>
-							<div class="invalid-feedback d-block"><?= session('errors.taille') ?></div>
-						<?php endif; ?>
-					</div>
-					<div class="form-group col-md-6">
-					<label class="label" for="poids">Poids actuel (kg)</label>
-					<input type="number" step="0.01" class="form-control <?= session('errors.poids') ? 'is-invalid' : '' ?>" name="poids" id="poids" placeholder="Poids en kg" required value="<?= old('poids') ?>">
-						<?php if (session('errors.poids')): ?>
-							<div class="invalid-feedback d-block"><?= session('errors.poids') ?></div>
-						<?php endif; ?>
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<button type="submit" class="btn btn-primary btn-block">Complete Registration</button>
-				</div>
-				
-				<div class="form-group">
-					<a href="<?= base_url('register') ?>" class="btn btn-secondary btn-block">Back to Step 1</a>
-				</div>
-			</form>
-			
-			<p class="text-center mt-3">
-				Vous avez déjà un compte ? <a href="<?= base_url('login') ?>" class="text-primary">Connectez-vous ici</a>
-			</p>
-		</div>
-	</div>
+<div class="form-shell">
+    <div class="form-heading">
+        <span class="step-pill">Etape 2 sur 2</span>
+        <h2>Completer vos donnees de sante</h2>
+        <p>Les mesures de base permettent d'afficher l'IMC et de suggerer le bon parcours.</p>
+    </div>
+
+    <div class="steps-bar">
+        <span class="is-done">Profil</span>
+        <span class="is-active">Sante</span>
+    </div>
+
+    <?php if (session()->has('error')): ?>
+        <div class="alert-box alert-danger"><?= session('error') ?></div>
+    <?php endif; ?>
+
+    <form method="POST" action="<?= base_url('register/step2') ?>" class="smart-form" data-imc-form>
+        <?= csrf_field() ?>
+
+        <div class="field-grid">
+            <label class="field">
+                <span>Taille (cm)</span>
+                <input type="number" step="0.01" name="taille" id="taille" value="<?= old('taille') ?>" required>
+                <?php if (session('errors.taille')): ?><small class="field-error"><?= session('errors.taille') ?></small><?php endif; ?>
+            </label>
+
+            <label class="field">
+                <span>Poids actuel (kg)</span>
+                <input type="number" step="0.01" name="poids" id="poids" value="<?= old('poids') ?>" required>
+                <?php if (session('errors.poids')): ?><small class="field-error"><?= session('errors.poids') ?></small><?php endif; ?>
+            </label>
+        </div>
+
+        <div class="imc-preview">
+            <span>IMC estime</span>
+            <strong data-imc-value>--</strong>
+            <p data-imc-label>Entrez votre taille et votre poids pour obtenir un apercu immediat.</p>
+        </div>
+
+        <div class="action-row">
+            <a class="btn btn-secondary btn-soft" href="<?= base_url('register') ?>">Retour</a>
+            <button type="submit" class="btn btn-primary">Finaliser l'inscription</button>
+        </div>
+    </form>
 </div>
 
 <?= $this->endSection() ?>
