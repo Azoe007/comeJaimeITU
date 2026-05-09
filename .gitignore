@@ -1,9 +1,17 @@
-# Ignorer le contenu de writable
+# Ignorer les fichiers generes dans writable, mais garder les dossiers.
 /writable/*
-# Sauf les fichiers index.html pour garder la structure
 !/writable/index.html
+!/writable/cache/
+!/writable/cache/index.html
+!/writable/logs/
+!/writable/logs/index.html
+!/writable/session/
+!/writable/session/index.html
+!/writable/debugbar/
+!/writable/debugbar/index.html
+!/writable/uploads/
+!/writable/uploads/index.html
 
-# Ignorer spécifiquement les logs, caches, sessions, et debugbar
 /writable/cache/*
 !/writable/cache/index.html
 /writable/logs/*
@@ -15,6 +23,6 @@
 /writable/uploads/*
 !/writable/uploads/index.html
 
-# Ignorer les fichiers de base de données s'ils sont dans writable
+# Ignorer les fichiers de base de donnees s'ils sont dans writable.
 /writable/**/*.db
 /writable/**/*.sqlite
