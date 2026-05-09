@@ -14,10 +14,14 @@
         <div class="hero-copy" data-reveal="up">
             <span class="eyebrow">Application de nutrition ciblee</span>
             <h1>Atteignez votre poids ideal avec un programme sur-mesure.</h1>
-            <p>Renseignez votre profil, obtenez votre IMC, choisissez un objectif clair puis laissez l'application proposer le bon regime, l'activite sportive et la duree adaptee.</p>
+            <p>En 2 minutes, calculez votre IMC et decouvrez le programme ideal pour votre morphologie.</p>
             <div class="hero-actions">
-                <a class="btn btn-primary" href="<?= base_url('register') ?>">Calculer mon IMC</a>
-                <a class="btn btn-secondary" href="<?= base_url('plans') ?>">Voir un exemple de programme</a>
+                <a class="btn btn-primary" href="<?= base_url('objectif/diagnostic') ?>">Commencer mon bilan</a>
+                <a class="btn btn-secondary" href="<?= base_url('plans') ?>">Explorer les programmes</a>
+            </div>
+            <div class="hero-caption">
+                <strong>Transition revue depuis l'accueil</strong>
+                <span>Diagnostic public, choix de l'intention, puis revelation du programme avant authentification finale.</span>
             </div>
             <div class="hero-stats">
                 <?php foreach ($stats as $item): ?>
@@ -31,14 +35,14 @@
 
         <div class="hero-visual" data-reveal="up">
             <div class="bmi-card floating">
-                <span>Indice de masse corporelle</span>
-                <strong>22.4</strong>
-                <p>Zone ideale pour un objectif equilibre.</p>
+                <span>Bilan express</span>
+                <strong>3 etapes</strong>
+                <p>Diagnostic, intention et suggestion personnalisee avant commande.</p>
             </div>
             <div class="goal-strip">
-                <span>+ poids</span>
-                <span>- poids</span>
-                <span>IMC ideal</span>
+                <span>Diagnostic</span>
+                <span>Objectif</span>
+                <span>Suggestion</span>
             </div>
         </div>
     </div>
