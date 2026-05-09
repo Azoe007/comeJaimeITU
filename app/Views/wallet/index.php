@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
@@ -7,23 +8,16 @@
     <title>Wallet</title>
 </head>
 <body>
+=======
+<?= $this->extend('layouts/front') ?>
+<?= $this->section('content') ?>
+>>>>>>> Stashed changes
 
-<!-- Dans ton Header, à droite -->
-<div class="header-right">
-    <?php if (session()->get('is_gold')): ?>
-        <span class="badge" style="background-color: #ffd700; color: #000;">✨ Membre Gold</span>
-    <?php else: ?>
-        <form action="<?= base_url('wallet/acheterGold') ?>" method="POST" style="display:inline;">
-            <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Devenir Gold pour 25 000 Ar ?')">
-                👑 Devenir Gold (25 000 Ar)
-            </button>
-        </form>
-    <?php endif; ?>
-    
-    <!-- Affichage du solde juste à côté -->
-    <span class="ms-3">Solde: <?= number_format($solde_header ?? 0, 0, ',', ' ') ?> Ar</span>
-</div>
+<?php
+    $transactions = $transactions ?? [];
+?>
 
+<<<<<<< Updated upstream
     <div class="card">
     <div class="card-body">
         <h5>Votre solde actuel : <strong><?= number_format($solde ?? 0 , 0, ',', ' ') ?> Ar</strong></h5>
@@ -48,6 +42,8 @@
     ];
 ?>
 
+=======
+>>>>>>> Stashed changes
 <section class="page-hero compact">
     <div class="container page-hero-inner" data-reveal="up">
         <div>
@@ -59,7 +55,10 @@
             <span>Solde disponible</span>
             <strong><?= number_format($solde ?? 0, 0, ',', ' ') ?> Ar</strong>
         </div>
+<<<<<<< Updated upstream
 >>>>>>> e36906429cee746dd6360b099d23bbcf23329423
+=======
+>>>>>>> Stashed changes
     </div>
 </section>
 
@@ -95,9 +94,43 @@
                         <b><?= esc($transaction['amount']) ?></b>
                     </article>
                 <?php endforeach; ?>
+<<<<<<< Updated upstream
             </div>
         </div>
     </div>
 </section>
 
 <?= $this->endSection() ?>
+=======
+                <?php if (empty($transactions)): ?>
+                    <article class="list-item">
+                        <div>
+                            <strong>Aucun mouvement pour le moment.</strong>
+                            <span>Vos recharges et achats apparaitront ici.</span>
+                        </div>
+                    </article>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="margin-top: 2rem;">
+        <div class="feature-card" data-reveal="up">
+            <span class="card-tag">Gold</span>
+            <h2>Passer au compte Gold</h2>
+            <p>Activation unique a <strong>30 000 Ar</strong>. Debloque 15% de remise sur tous les regimes.</p>
+
+            <?php if ((bool) session('is_gold')): ?>
+                <div class="alert-box alert-success">Votre compte est deja Gold.</div>
+            <?php else: ?>
+                <form action="<?= base_url('wallet/acheterGold') ?>" method="post">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="btn btn-accent">Devenir Gold (30 000 Ar)</button>
+                </form>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
+
+<?= $this->endSection() ?>
+>>>>>>> Stashed changes

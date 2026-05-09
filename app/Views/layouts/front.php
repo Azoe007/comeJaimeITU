@@ -33,7 +33,7 @@
             <nav class="site-nav" data-nav>
                 <a href="<?= base_url('/') ?>">Accueil</a>
                 <?php if ($isLoggedIn): ?>
-                    <a href="<?= base_url('profile') ?>">Mon Profil<?= $isGold ? ' <span class="inline-badge">GOLD</span>' : '' ?></a>
+                    <a href="<?= base_url('profile') ?>">Mon Profil</a>
                     <a href="<?= base_url('wallet') ?>">Mon Porte-monnaie</a>
                     <a href="<?= base_url('plans') ?>">Mes Regimes</a>
                     <a href="<?= base_url('logout') ?>">Deconnexion</a>
