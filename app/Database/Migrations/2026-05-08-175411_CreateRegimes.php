@@ -35,8 +35,8 @@ class CreateRegimes extends Migration
             ],
             'type' => [
                 'type' => 'ENUM',
-                'constraint' => [1, -1], // 1 : 'augmentation' ou -1 :'diminution'
-                'default' => 1, 
+                'constraint' => ['augmentation', 'diminution'],
+                'default' => 'augmentation',
             ],
         ]);
         $this->forge->addKey('id', true);
