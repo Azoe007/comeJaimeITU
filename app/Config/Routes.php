@@ -20,6 +20,8 @@ $routes->get('wallet', 'WalletController::index');
 $routes->post('wallet/recharger', 'WalletController::recharger');
 $routes->get('code', 'CodeController::index');
 
+
+
 $routes->group('admin', static function ($routes) {
     $routes->get('login', static function () {
         return view('admin/login');
