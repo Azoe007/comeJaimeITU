@@ -10,22 +10,29 @@
     <link rel="stylesheet" href="<?= base_url('assets/css/back-office.css') ?>">
 </head>
 <body class="admin-auth-body">
-    <section class="admin-auth-card" data-reveal="up">
-        <span class="admin-kicker">Back Office</span>
-        <h1>Connexion securisee</h1>
-        <p>Point d'entree administratif pour le tableau de bord, les CRUD et la validation des codes.</p>
-        <form class="admin-auth-form">
-            <label>
-                <span>Email</span>
-                <input type="email" placeholder="admin@healthcoach.mg">
-            </label>
-            <label>
-                <span>Mot de passe</span>
-                <input type="password" placeholder="••••••••">
-            </label>
-            <button type="button" class="admin-btn">Acceder au back office</button>
-        </form>
-    </section>
+    <div class="admin-auth-wrap">
+        <section class="admin-auth-card" data-reveal="up">
+            <span class="admin-kicker">Back Office</span>
+            <h1>Connexion securisee</h1>
+            <p>Point d'entree administratif pour le tableau de bord, les CRUD et la validation des codes.</p>
+            <form class="admin-auth-form">
+                <label>
+                    <span>Email</span>
+                    <input type="email" placeholder="admin@healthcoach.mg">
+                </label>
+                <label>
+                    <span>Mot de passe</span>
+                    <input type="password" placeholder="********">
+                </label>
+                <button type="button" class="admin-btn">Acceder au back office</button>
+            </form>
+        </section>
+
+        <footer class="admin-footer standalone">
+            <span>Health Coach Back Office</span>
+            <span>Acces reserve a l'administration de la plateforme.</span>
+        </footer>
+    </div>
     <script src="<?= base_url('assets/js/back-office.js') ?>"></script>
 </body>
 </html>

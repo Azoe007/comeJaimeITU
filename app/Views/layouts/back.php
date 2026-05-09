@@ -44,6 +44,11 @@
             </header>
 
             <?= $this->renderSection('content') ?>
+
+            <footer class="admin-footer">
+                <span>Health Coach Back Office</span>
+                <span>Dashboard, CRUD, validation des codes et parametres metier.</span>
+            </footer>
         </main>
     </div>
 
