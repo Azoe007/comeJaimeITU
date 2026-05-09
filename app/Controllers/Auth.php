@@ -175,7 +175,7 @@ class Auth extends BaseController
     {
         session()->destroy();
 
-        return redirect()->to(base_url('/login'))->with('success', 'Vous êtes déconnecté.');
+        return redirect()->to(base_url('/'))->with('success', 'Vous êtes déconnecté.');
     }
 
     /**
