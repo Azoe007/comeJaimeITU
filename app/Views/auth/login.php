@@ -17,7 +17,7 @@
 
         <label class="field">
             <span>Adresse email</span>
-            <input type="email" name="email" value="<?= old('email') ?>" required>
+            <input type="email" id="login-email" name="email" value="<?= old('email') ?>" required>
             <?php if (session('errors.email')): ?><small class="field-error"><?= session('errors.email') ?></small><?php endif; ?>
         </label>
 
@@ -33,4 +33,8 @@
     <p class="form-footnote">Pas encore de compte ? <a href="<?= base_url('register') ?>">Commencer l'inscription</a></p>
 </div>
 
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script src="<?= base_url('assets/js-ajax/auth.js') ?>"></script>
 <?= $this->endSection() ?>
