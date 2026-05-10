@@ -34,8 +34,8 @@
                 <a href="<?= base_url('/') ?>">Accueil</a>
                 <?php if ($isLoggedIn): ?>
                     <a href="<?= base_url('profile') ?>">Mon Profil</a>
+                    <a href="<?= base_url('mon-objectif') ?>">Mon Objectif</a>
                     <a href="<?= base_url('wallet') ?>">Mon Porte-monnaie</a>
-                    <a href="<?= base_url('plans') ?>">Mes Regimes</a>
                     <a href="<?= base_url('logout') ?>">Deconnexion</a>
                 <?php else: ?>
                     <a href="<?= base_url('register') ?>">Inscription</a>
@@ -71,7 +71,7 @@
             <div class="footer-links">
                 <strong>Navigation</strong>
                 <a href="<?= base_url('/') ?>">Accueil</a>
-                <a href="<?= base_url('plans') ?>">Regimes</a>
+                <a href="<?= base_url('mon-objectif') ?>">Mon objectif</a>
                 <a href="<?= base_url('wallet') ?>">Porte-monnaie</a>
             </div>
             <div class="footer-links">

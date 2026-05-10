@@ -141,12 +141,23 @@
 
         <article class="feature-card" data-reveal="up">
             <span class="card-tag accent-tag">Objectifs</span>
-            <h2>Choix disponibles</h2>
-            <div class="goal-options">
-                <button class="goal-chip is-active">Augmenter son poids</button>
-                <button class="goal-chip">Reduire son poids</button>
-                <button class="goal-chip">Atteindre son IMC ideal</button>
-            </div>
+            <h2><?= !empty($currentObjectif) ? 'Objectif actuel' : 'Choisir un objectif' ?></h2>
+            <?php if (!empty($currentObjectif)): ?>
+                <div class="list-stack">
+                    <div class="list-item"><strong>Objectif</strong><span><?= esc($currentObjectif['objectif_nom']) ?></span></div>
+                    <div class="list-item"><strong>Poids de depart</strong><span><?= esc((string) $currentObjectif['poids_kg']) ?> kg</span></div>
+                    <?php if (!empty($currentObjectif['poids_objectif'])): ?><div class="list-item"><strong>Poids vise</strong><span><?= esc((string) $currentObjectif['poids_objectif']) ?> kg</span></div><?php endif; ?>
+                </div>
+                <div class="action-row">
+                    <a class="btn btn-soft" href="<?= base_url('objectif/diagnostic') ?>">Changer</a>
+                    <a class="btn btn-primary" href="<?= base_url('mon-objectif') ?>">Voir mon objectif</a>
+                </div>
+            <?php else: ?>
+                <p>Aucun objectif n'a encore ete enregistre pour votre compte.</p>
+                <div class="action-row">
+                    <a class="btn btn-primary" href="<?= base_url('objectif/diagnostic') ?>">Choisir un objectif</a>
+                </div>
+            <?php endif; ?>
         </article>
 
         <article class="feature-card" data-reveal="up">

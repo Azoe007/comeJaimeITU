@@ -41,7 +41,7 @@
                         <span><?= number_format((float) $suggestion['prixGold'], 0, ',', ' ') ?> Ar Gold</span>
                     </div>
 
-                    <a class="btn btn-primary btn-block" href="<?= base_url('suggestion/' . $suggestion['id']) ?>">Voir le detail du programme</a>
+                    <a class="btn btn-primary btn-block" href="<?= base_url('suggestion/' . $suggestion['key']) ?>">Voir le detail du programme</a>
                 </article>
             <?php endforeach; ?>
         </div>

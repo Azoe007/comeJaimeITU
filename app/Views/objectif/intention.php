@@ -33,7 +33,7 @@
                         <?php
                             $name = (string) ($objectif['nom'] ?? '');
                             $lower = strtolower($name);
-                            $type = str_contains($lower, 'rédu') ? 'reduire' : (str_contains($lower, 'augment') || str_contains($lower, 'gain') ? 'augmenter' : 'ideal');
+                            $type = str_contains($lower, 'redu') ? 'reduire' : (str_contains($lower, 'augment') || str_contains($lower, 'gain') ? 'augmenter' : 'ideal');
                             $isSelected = (string) ($selectedObjectif ?? '') === (string) $objectif['id'];
                             $descriptions = [
                                 'reduire' => 'Programme oriente perte de poids avec duree ciblee et activite associee.',

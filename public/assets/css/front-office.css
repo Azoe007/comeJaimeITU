@@ -540,6 +540,17 @@ p { margin: 0; line-height: 1.7; color: rgba(47, 54, 64, 0.82); }
     margin-top: 1.4rem;
     margin-bottom: 0;
 }
+.engine-note {
+    display: grid;
+    gap: 0.35rem;
+    margin-top: 1.4rem;
+    padding: 1rem 1.1rem;
+    border-radius: 18px;
+    background: rgba(39, 60, 117, 0.06);
+}
+.engine-note strong {
+    color: var(--front-secondary);
+}
 .site-footer {
     margin-top: auto;
     padding: 2.5rem 0;

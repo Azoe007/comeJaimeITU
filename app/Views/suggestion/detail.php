@@ -19,7 +19,11 @@
 <section class="content-section">
     <div class="container split-panel">
         <div class="feature-card suggestion-card" data-reveal="up">
-            <span class="card-tag accent-tag"><?= $suggestion['withActivity'] ? 'Avec activite' : 'Sans activite' ?></span>
+            <div class="tag-row">
+                <?php foreach (($suggestion['tags'] ?? []) as $tag): ?>
+                    <span class="card-tag accent-tag"><?= esc($tag) ?></span>
+                <?php endforeach; ?>
+            </div>
             <h2>Pour atteindre <?= esc($objectifLabel) ?>, ce programme propose le regime <?= esc($suggestion['regime']) ?> sur <?= esc((string) $suggestion['duree']) ?> jours.</h2>
             <p><?= esc($suggestion['description']) ?></p>
 
@@ -27,12 +31,18 @@
                 <article class="list-item"><strong>Activite sportive</strong><span><?= esc($suggestion['sport']) ?></span></article>
                 <article class="list-item"><strong>Organisation</strong><span><?= esc($suggestion['activityMeta']) ?></span></article>
                 <article class="list-item"><strong>Variation cible</strong><span><?= ($suggestion['variation'] > 0 ? '+' : '') . esc((string) $suggestion['variation']) ?> kg</span></article>
+                <article class="list-item"><strong>Ecart avec l'objectif</strong><span><?= esc((string) $suggestion['gap']) ?> kg</span></article>
             </div>
 
             <div class="macro-bar detail-macros">
                 <div>Viande <?= esc((string) $suggestion['macros']['viande']) ?>%</div>
                 <div>Poisson <?= esc((string) $suggestion['macros']['poisson']) ?>%</div>
                 <div>Volaille <?= esc((string) $suggestion['macros']['volaille']) ?>%</div>
+            </div>
+
+            <div class="engine-note">
+                <strong>Moteur de suggestion</strong>
+                <span><?= esc($suggestion['engineSummary']) ?></span>
             </div>
         </div>
 
@@ -55,7 +65,10 @@
 
             <div class="action-row">
                 <a class="btn btn-soft" href="<?= base_url('suggestion') ?>">Retour aux suggestions</a>
-                <a class="btn btn-primary" href="<?= $isLoggedIn ? base_url('plans') : base_url('login') ?>">Sauvegarder et commander cet objectif</a>
+                <form method="post" action="<?= base_url('suggestion/' . $suggestion['key'] . '/save') ?>">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="btn btn-primary">Sauvegarder et commander cet objectif</button>
+                </form>
             </div>
         </div>
     </div>

@@ -91,17 +91,17 @@ class ObjectifController extends BaseController
             return redirect()->back()->withInput()->with('error', 'Objectif introuvable.');
         }
 
-        $normalized = $this->normalizeObjectiveName((string) $objectif['nom']);
+        $objetcifName = $this->reduireObjectifName((string) $objectif['nom']);
         $targetKg = $this->request->getPost('target_kg');
 
-        if (in_array($normalized, ['augmenter', 'reduire'], true) && ($targetKg === null || $targetKg === '' || (float) $targetKg <= 0)) {
+        if (in_array($objetcifName, ['augmenter', 'reduire'], true) && ($targetKg === null || $targetKg === '' || (float) $targetKg <= 0)) {
             return redirect()->back()->withInput()->with('error', 'Precisez le nombre de kilos souhaite.');
         }
 
         $funnel = session('objectif_funnel') ?? [];
         $funnel['objectif_id'] = $objectifId;
         $funnel['objectif_nom'] = (string) $objectif['nom'];
-        $funnel['objectif_type'] = $normalized;
+        $funnel['objectif_type'] = $objetcifName;
         $funnel['target_kg'] = $targetKg !== null && $targetKg !== '' ? (float) $targetKg : null;
 
         session()->set('objectif_funnel', $funnel);
@@ -126,7 +126,7 @@ class ObjectifController extends BaseController
         ];
     }
 
-    protected function normalizeObjectiveName(string $name): string
+    protected function reduireObjectifName(string $name): string
     {
         $value = strtolower(trim($name));
 
@@ -134,7 +134,7 @@ class ObjectifController extends BaseController
             return 'reduire';
         }
 
-        if (str_contains($value, 'augment') || str_contains($value, 'gain')) {
+        if (str_contains($value, 'augment')) {
             return 'augmenter';
         }
 

@@ -3,20 +3,35 @@
 namespace App\Controllers;
 
 use App\Models\ActiviteSportiveModel;
+use App\Models\ConfigRegimeModel;
+use App\Models\ObjectifHistoryModel;
+use App\Models\ProgrammeModel;
 use App\Models\RegimeModel;
+use App\Models\TransactionModel;
+use App\Models\WalletModel;
 
 class SuggestionController extends BaseController
 {
     protected RegimeModel $regimeModel;
     protected ActiviteSportiveModel $activiteSportiveModel;
+    protected ConfigRegimeModel $configRegimeModel;
+    protected ObjectifHistoryModel $objectifHistoryModel;
+    protected WalletModel $walletModel;
+    protected ProgrammeModel $programmeModel;
+    protected TransactionModel $transactionModel;
 
     public function __construct()
     {
         $this->regimeModel = new RegimeModel();
         $this->activiteSportiveModel = new ActiviteSportiveModel();
+        $this->configRegimeModel = new ConfigRegimeModel();
+        $this->objectifHistoryModel = new ObjectifHistoryModel();
+        $this->walletModel = new WalletModel();
+        $this->programmeModel = new ProgrammeModel();
+        $this->transactionModel = new TransactionModel();
     }
 
-    public function index(): string
+    public function index()
     {
         $funnel = session('objectif_funnel') ?? [];
 
@@ -24,21 +39,25 @@ class SuggestionController extends BaseController
             return redirect()->to(base_url('objectif/diagnostic'));
         }
 
-        $suggestions = $this->buildSuggestions($funnel);
-        session()->set('generated_suggestions', $suggestions);
+        $context = $this->getObjetcifUser($funnel);
+        $suggestions = $this->buildSuggestions($context);
+
+        session()->set('temporary_programmes', $suggestions);
 
         return view('suggestion/index', [
             'pageTitle' => 'Suggestions personnalisees - Health Coach',
-            'objectifLabel' => $this->buildObjectiveLabel($funnel['objectif_type'] ?? 'ideal', $funnel['target_kg'] ?? null),
+            'objectifLabel' => $context['label'],
             'suggestions' => $suggestions,
+            'context' => $context,
         ]);
     }
 
-    public function detail(int $index): string
+    public function detail(string $key)
     {
         $funnel = session('objectif_funnel') ?? [];
-        $suggestions = session('generated_suggestions') ?? $this->buildSuggestions($funnel);
-        $suggestion = $suggestions[$index] ?? null;
+        $context = $this->getObjetcifUser($funnel);
+        $suggestions = session('temporary_programmes') ?? $this->buildSuggestions($context);
+        $suggestion = $this->findSuggestion($suggestions, $key);
 
         if ($suggestion === null) {
             return redirect()->to(base_url('suggestion'));
@@ -47,149 +66,416 @@ class SuggestionController extends BaseController
         return view('suggestion/detail', [
             'pageTitle' => 'Detail programme - Health Coach',
             'suggestion' => $suggestion,
-            'objectifLabel' => $this->buildObjectiveLabel($funnel['objectif_type'] ?? 'ideal', $funnel['target_kg'] ?? null),
+            'objectifLabel' => $context['label'],
             'isLoggedIn' => (bool) session('isLoggedIn'),
         ]);
     }
 
-    protected function buildObjectiveLabel(string $objectifType, $targetKg): string
+    public function saveSelection(string $key)
     {
-        if ($objectifType === 'reduire' && $targetKg) {
-            return '-' . rtrim(rtrim(number_format((float) $targetKg, 1, '.', ''), '0'), '.') . ' kg';
+        $suggestions = session('temporary_programmes') ?? [];
+        $suggestion = $this->findSuggestion($suggestions, $key);
+
+        if ($suggestion === null) {
+            return redirect()->to(base_url('suggestion'))->with('error', 'Programme temporaire introuvable.');
         }
 
-        if ($objectifType === 'augmenter' && $targetKg) {
-            return '+' . rtrim(rtrim(number_format((float) $targetKg, 1, '.', ''), '0'), '.') . ' kg';
+        session()->set('selected_temp_programme', $suggestion);
+        session()->remove('pending_objectif_history_id');
+
+        if (! session('isLoggedIn')) {
+            session()->set('redirect_after_auth', base_url('objectif/commande'));
+            return redirect()->to(base_url('login'))->with('error', 'Connectez-vous ou inscrivez-vous pour continuer la commande.');
         }
 
-        return 'votre poids sante';
+        $this->ensureObjectifHistory((int) session('user_id'), session('objectif_funnel') ?? []);
+        return redirect()->to(base_url('objectif/commande'));
     }
 
-    protected function buildSuggestions(array $funnel): array
+    public function commande()
     {
-        $objectifType = $funnel['objectif_type'] ?? 'ideal';
-        $regimeType = $objectifType === 'augmenter' ? 'augmentation' : 'diminution';
-        $regimes = $this->regimeModel->where('type', $regimeType)->findAll();
-        $activites = $this->activiteSportiveModel->findAll();
-
-        if ($objectifType === 'ideal') {
-            $regimes = $this->regimeModel->findAll();
+        $userId = (int) session('user_id');
+        if ($userId <= 0) {
+            session()->set('redirect_after_auth', base_url('objectif/commande'));
+            return redirect()->to(base_url('login'))->with('error', 'Veuillez vous connecter pour valider votre commande.');
         }
 
-        if (empty($regimes)) {
-            return $this->fallbackSuggestions($funnel);
+        $suggestion = session('selected_temp_programme');
+        $funnel = session('objectif_funnel') ?? [];
+
+        if (! is_array($suggestion) || $suggestion === []) {
+            return redirect()->to(base_url('suggestion'))->with('error', 'Aucun programme temporaire selectionne.');
         }
 
-        $targetKg = (float) ($funnel['target_kg'] ?? 0);
-        $suggestions = [];
-        $activityIndex = 0;
+        $historyId = $this->ensureObjectifHistory($userId, $funnel);
+        $walletBalance = (int) ($this->walletModel->get_solde($userId) ?? 0);
+        $priceToPay = (bool) session('is_gold') ? (int) $suggestion['prixGold'] : (int) $suggestion['prix'];
 
-        foreach (array_values($regimes) as $index => $regime) {
-            $variation = (float) ($regime['variation'] ?? 0);
-            $duree = (int) ($regime['duree'] ?? 15);
-            $basePrice = max(12000, (int) round($duree * 1200 + abs($variation) * 2500));
-            $activity = $activites[$activityIndex] ?? null;
-            $activityIndex++;
+        return view('suggestion/commande', [
+            'pageTitle' => 'Valider ma commande - Health Coach',
+            'suggestion' => $suggestion,
+            'walletBalance' => $walletBalance,
+            'priceToPay' => $priceToPay,
+            'isGold' => (bool) session('is_gold'),
+            'canAfford' => $walletBalance >= $priceToPay,
+            'historyId' => $historyId,
+        ]);
+    }
 
-            $withActivity = $activity !== null && ($objectifType !== 'augmenter' || $index % 2 === 0);
-            $activityLabel = $withActivity ? (string) $activity['description'] : 'Sans activite sportive obligatoire';
-            $activityMeta = $withActivity
-                ? ((int) ($activity['frequence'] ?? 3)) . ' seances / semaine - ' . ((int) ($activity['duree'] ?? 30)) . ' min'
-                : 'Programme nutritionnel seul';
+    public function payer()
+    {
+        $userId = (int) session('user_id');
+        if ($userId <= 0) {
+            session()->set('redirect_after_auth', base_url('objectif/commande'));
+            return redirect()->to(base_url('login'))->with('error', 'Veuillez vous connecter pour payer ce programme.');
+        }
 
-            $suggestions[] = [
-                'id' => $index,
-                'title' => $this->buildRegimeTitle($regime, $index),
-                'description' => (string) ($regime['description'] ?? 'Programme nutritionnel personnalise.'),
-                'goalText' => $this->buildObjectiveLabel($objectifType, $targetKg ?: null),
-                'duree' => $duree,
-                'prix' => $basePrice,
-                'prixGold' => (int) round($basePrice * 0.85),
-                'regime' => $this->buildRegimeTitle($regime, $index),
-                'sport' => $activityLabel,
-                'activityMeta' => $activityMeta,
-                'withActivity' => $withActivity,
-                'tags' => [
-                    $withActivity ? 'Avec activite' : 'Sans activite',
-                    ucfirst((string) ($regime['type'] ?? 'equilibre')),
-                    $duree . ' jours',
-                ],
-                'macros' => [
-                    'viande' => (float) ($regime['viande'] ?? 0),
-                    'poisson' => (float) ($regime['poisson'] ?? 0),
-                    'volaille' => (float) ($regime['volaille'] ?? 0),
-                ],
-                'variation' => $variation,
+        $suggestion = session('selected_temp_programme');
+        if (! is_array($suggestion) || $suggestion === []) {
+            return redirect()->to(base_url('suggestion'))->with('error', 'Programme temporaire introuvable.');
+        }
+
+        $priceToPay = (bool) session('is_gold') ? (int) $suggestion['prixGold'] : (int) $suggestion['prix'];
+        $balance = (int) ($this->walletModel->get_solde($userId) ?? 0);
+
+        if ($balance < $priceToPay) {
+            return redirect()->to(base_url('objectif/commande'))->with('error', 'Solde insuffisant pour commander ce programme.');
+        }
+
+        $db = \Config\Database::connect();
+        $db->transBegin();
+
+        try {
+            if (! $this->walletModel->retirer_solde($userId, $priceToPay)) {
+                $db->transRollback();
+                return redirect()->to(base_url('objectif/commande'))->with('error', 'Solde insuffisant pour commander ce programme.');
+            }
+
+            $today = date('Y-m-d');
+            $dateFin = date('Y-m-d', strtotime('+' . max(0, ((int) $suggestion['duree']) - 1) . ' days'));
+            $programmePayload = [
+                'id_user' => $userId,
+                'id_regime' => (int) $suggestion['id_regime'],
+                'id_activite1' => $suggestion['id_activite1'] ?? null,
+                'id_activite2' => $suggestion['id_activite2'] ?? null,
+                'prix_total' => $priceToPay,
+                'date_debut' => $today,
+                'date_fin' => $dateFin,
+                'duree_jours' => (int) $suggestion['duree'],
+                'created_at' => date('Y-m-d H:i:s'),
             ];
-        }
 
-        return array_slice($suggestions, 0, 6);
+            $this->programmeModel->insert($programmePayload);
+            $programmeId = (int) $this->programmeModel->getInsertID();
+
+            if ($programmeId <= 0) {
+                $db->transRollback();
+                return redirect()->to(base_url('objectif/commande'))->with('error', 'Impossible de creer le programme.');
+            }
+
+            $this->transactionModel->insert([
+                'id_user' => $userId,
+                'id_programme' => $programmeId,
+                'montant' => $priceToPay,
+                'reduction' => (bool) session('is_gold') ? 15 : 0,
+                'etat' => 'valide',
+                'created_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            if ($db->transStatus() === false) {
+                $db->transRollback();
+                return redirect()->to(base_url('objectif/commande'))->with('error', 'Impossible de finaliser la transaction.');
+            }
+
+            $db->transCommit();
+            $transactions = session('demo_wallet_transactions') ?? [];
+            $transactions[] = [
+                'label' => 'Commande programme ' . $suggestion['title'],
+                'amount' => '-' . number_format((float) $priceToPay, 0, ',', ' ') . ' Ar',
+                'status' => 'Valide',
+            ];
+            session()->set('demo_wallet_transactions', $transactions);
+            session()->remove('selected_temp_programme');
+            session()->remove('temporary_programmes');
+            session()->remove('redirect_after_auth');
+
+            return redirect()->to(base_url('mon-objectif'))->with('success', 'Programme commande avec succes.');
+        } catch (\Throwable $e) {
+            $db->transRollback();
+            return redirect()->to(base_url('objectif/commande'))->with('error', 'Une erreur est survenue pendant la commande.');
+        }
     }
 
-    protected function buildRegimeTitle(array $regime, int $index): string
+    protected function ensureObjectifHistory(int $userId, array $funnel): ?int
     {
-        $title = trim((string) ($regime['description'] ?? ''));
-        if ($title !== '') {
-            return mb_strimwidth($title, 0, 42, '...');
+        $existing = session('pending_objectif_history_id');
+        if ($existing) {
+            return (int) $existing;
         }
 
-        return 'Programme ' . ($index + 1);
+        $objectifId = (int) ($funnel['objectif_id'] ?? 0);
+        if ($objectifId <= 0) {
+            return null;
+        }
+
+        $poids = (float) ($funnel['poids'] ?? 0);
+        $taille = (float) ($funnel['taille'] ?? 0);
+        $poidsObjectif = null;
+
+        if (($funnel['objectif_type'] ?? '') === 'reduire') {
+            $poidsObjectif = $poids - (float) ($funnel['target_kg'] ?? 0);
+        } elseif (($funnel['objectif_type'] ?? '') === 'augmenter') {
+            $poidsObjectif = $poids + (float) ($funnel['target_kg'] ?? 0);
+        }
+
+        $this->objectifHistoryModel->insert([
+            'id_user' => $userId,
+            'id_objectif' => $objectifId,
+            'poids_kg' => $poids,
+            'taille_cm' => $taille,
+            'poids_objectif' => $poidsObjectif,
+            'created_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        $historyId = (int) $this->objectifHistoryModel->getInsertID();
+        session()->set('pending_objectif_history_id', $historyId);
+
+        return $historyId ?: null;
     }
 
-    protected function fallbackSuggestions(array $funnel): array
+    protected function getObjetcifUser(array $funnel): array
     {
-        $objectifType = $funnel['objectif_type'] ?? 'ideal';
-        $goalText = $this->buildObjectiveLabel($objectifType, $funnel['target_kg'] ?? null);
+        $type = $funnel['objectif_type'] ?? 'ideal';
+        $tailleCm = (float) ($funnel['taille'] ?? 0);
+        $poidsKg = (float) ($funnel['poids'] ?? 0);
+        $targetKg = isset($funnel['target_kg']) ? (float) $funnel['target_kg'] : 0.0;
+
+        if ($type === 'ideal' && $tailleCm > 0 && $poidsKg > 0) {
+            $tailleM = $tailleCm / 100;
+            $poidsIdeal = 22 * $tailleM * $tailleM;
+            $delta = round($poidsIdeal - $poidsKg, 2);
+            $targetKg = abs($delta);
+            $type = $delta >= 0 ? 'augmenter' : 'reduire';
+        }
+
+        $targetKg = max(0.1, $targetKg ?: 0.1);
 
         return [
-            [
-                'id' => 0,
-                'title' => 'Equilibre Vital 15 jours',
-                'description' => 'Programme simple pour ajuster rapidement votre trajectoire de poids.',
-                'goalText' => $goalText,
-                'duree' => 15,
-                'prix' => 24000,
-                'prixGold' => 20400,
-                'regime' => 'Equilibre Vital',
-                'sport' => 'Marche active + cardio doux',
-                'activityMeta' => '3 seances / semaine - 30 min',
-                'withActivity' => true,
-                'tags' => ['Avec activite', 'Equilibre', '15 jours'],
-                'macros' => ['viande' => 40, 'poisson' => 30, 'volaille' => 30],
-                'variation' => $objectifType === 'augmenter' ? 2 : -2,
-            ],
-            [
-                'id' => 1,
-                'title' => 'Reset Nutrition 21 jours',
-                'description' => 'Version plus structuree pour une progression visible sur trois semaines.',
-                'goalText' => $goalText,
-                'duree' => 21,
-                'prix' => 28000,
-                'prixGold' => 23800,
-                'regime' => 'Reset Nutrition',
-                'sport' => 'Sans activite sportive obligatoire',
-                'activityMeta' => 'Programme nutritionnel seul',
-                'withActivity' => false,
-                'tags' => ['Sans activite', 'Nutrition', '21 jours'],
-                'macros' => ['viande' => 35, 'poisson' => 35, 'volaille' => 30],
-                'variation' => $objectifType === 'augmenter' ? 2.5 : -3,
-            ],
-            [
-                'id' => 2,
-                'title' => 'Forme Durable 30 jours',
-                'description' => 'Programme plus complet avec activite encadree et progression plus stable.',
-                'goalText' => $goalText,
-                'duree' => 30,
-                'prix' => 36000,
-                'prixGold' => 30600,
-                'regime' => 'Forme Durable',
-                'sport' => 'Renforcement leger + marche rapide',
-                'activityMeta' => '4 seances / semaine - 40 min',
-                'withActivity' => true,
-                'tags' => ['Avec activite', 'Progressif', '30 jours'],
-                'macros' => ['viande' => 30, 'poisson' => 40, 'volaille' => 30],
-                'variation' => $objectifType === 'augmenter' ? 4 : -4,
-            ],
+            'type' => $type,
+            'targetKg' => $targetKg,
+            'label' => $this->buildObjectiveLabel($type, $targetKg, $funnel['objectif_type'] ?? 'ideal'),
+            'sourceType' => $funnel['objectif_type'] ?? 'ideal',
+            'poids' => $poidsKg,
+            'taille' => $tailleCm,
         ];
+    }
+
+    protected function buildObjectiveLabel(string $resolvedType, float $targetKg, string $sourceType): string
+    {
+        if ($sourceType === 'ideal') {
+            return 'votre poids sante';
+        }
+
+        $prefix = $resolvedType === 'augmenter' ? '+' : '-';
+        return $prefix . rtrim(rtrim(number_format($targetKg, 1, '.', ''), '0'), '.') . ' kg';
+    }
+
+    protected function buildSuggestions(array $context): array
+    {
+        $regimeType = $context['type'] === 'augmenter' ? 'augmentation' : 'diminution';
+        $regimes = $this->regimeModel->where('type', $regimeType)->findAll();
+        $activites = $context['type'] === 'reduire' ? $this->activiteSportiveModel->findAll() : [];
+        $configByRegime = $this->indexRegimeConfigs();
+        $programmes = [];
+
+        foreach ($regimes as $regime) {
+            $programmes[] = $this->makeProgramme($context, $regime, [], $configByRegime);
+            foreach ($activites as $activite) {
+                $programmes[] = $this->makeProgramme($context, $regime, [$activite], $configByRegime);
+            }
+            for ($i = 0; $i < count($activites); $i++) {
+                for ($j = $i + 1; $j < count($activites); $j++) {
+                    $programmes[] = $this->makeProgramme($context, $regime, [$activites[$i], $activites[$j]], $configByRegime);
+                }
+            }
+        }
+
+        $programmes = array_values(array_filter($programmes));
+        usort($programmes, static fn(array $a, array $b): int => [$a['gap'], $a['duree'], $a['prix']] <=> [$b['gap'], $b['duree'], $b['prix']]);
+
+        $seen = [];
+        $unique = [];
+        foreach ($programmes as $programme) {
+            $fingerprint = $programme['id_regime'] . '-' . implode('-', $programme['activityIds']) . '-' . $programme['duree'];
+            if (isset($seen[$fingerprint])) {
+                continue;
+            }
+            $seen[$fingerprint] = true;
+            $unique[] = $programme;
+            if (count($unique) === 6) {
+                break;
+            }
+        }
+
+        return $unique;
+    }
+
+    protected function makeProgramme(array $context, array $regime, array $activites, array $configByRegime): ?array
+    {
+        $regimeEffectPerDay = $this->valeurParJour((float) $regime['variation'], (int) $regime['duree']);
+        $activityEffectPerDay = 0.0;
+        foreach ($activites as $activite) {
+            $activityEffectPerDay += $this->valeurParJour((float) $activite['diminution_poids'], (int) $activite['duree']);
+        }
+
+        $totalEffectPerDay = $regimeEffectPerDay + $activityEffectPerDay;
+        if ($totalEffectPerDay <= 0) {
+            return null;
+        }
+
+        $targetKg = $context['targetKg'];
+        $duree = max(1, (int) ceil($targetKg / $totalEffectPerDay));
+        $variationAtteinte = round($totalEffectPerDay * $duree, 2);
+        $gap = round(abs($targetKg - $variationAtteinte), 2);
+        $regimePrice = $this->resolveRegimePrice((int) $regime['id'], $duree, $configByRegime, $regime);
+        $activityPrice = $this->estimateActivityPrice($activites, $duree);
+        $prix = (int) round($regimePrice + $activityPrice);
+
+        $activityNames = array_map(static fn(array $item): string => (string) $item['description'], $activites);
+        $activityIds = array_map(static fn(array $item): int => (int) $item['id'], $activites);
+        $hasActivity = $activityNames !== [];
+        $key = 'p_' . md5(json_encode(['regime' => $regime['id'], 'activities' => $activityIds, 'duree' => $duree, 'target' => $targetKg, 'type' => $context['type']]));
+
+        return [
+            'key' => $key,
+            'id_regime' => (int) $regime['id'],
+            'id_activite1' => $activityIds[0] ?? null,
+            'id_activite2' => $activityIds[1] ?? null,
+            'activityIds' => $activityIds,
+            'title' => $this->buildProgrammeTitle($regime, $duree, $hasActivity),
+            'description' => (string) $regime['description'],
+            'goalText' => $context['label'],
+            'duree' => $duree,
+            'prix' => $prix,
+            'prixGold' => (int) round($prix * 0.85),
+            'regime' => $this->buildRegimeTitle($regime),
+            'sport' => $hasActivity ? implode(' + ', $activityNames) : 'Sans activite sportive',
+            'activityMeta' => $this->buildActivityMeta($activites),
+            'withActivity' => $hasActivity,
+            'tags' => [$gap <= 0.2 ? 'Exact' : 'Approche la plus proche', $hasActivity ? 'Avec activite' : 'Sans activite', $duree . ' jours'],
+            'macros' => ['viande' => (float) $regime['viande'], 'poisson' => (float) $regime['poisson'], 'volaille' => (float) $regime['volaille']],
+            'variation' => $context['type'] === 'augmenter' ? $variationAtteinte : -$variationAtteinte,
+            'variationAbs' => $variationAtteinte,
+            'gap' => $gap,
+            'temporary' => true,
+            'engineSummary' => $this->buildEngineSummary($context['targetKg'], $regimeEffectPerDay, $activityEffectPerDay, $duree, $variationAtteinte, $regimePrice, $activityPrice),
+        ];
+    }
+
+    protected function valeurParJour(float $variation, int $duree): float
+    {
+        return abs($variation) / max(1, $duree);
+    }
+
+    protected function indexRegimeConfigs(): array
+    {
+        $rows = $this->configRegimeModel->findAll();
+        $indexed = [];
+        foreach ($rows as $row) {
+            $indexed[(int) $row['id_regime']][] = ['duree_jours' => (int) $row['duree_jours'], 'prix' => (float) $row['prix']];
+        }
+        foreach ($indexed as &$configs) {
+            usort($configs, static fn(array $a, array $b): int => $a['duree_jours'] <=> $b['duree_jours']);
+        }
+        return $indexed;
+    }
+
+    protected function resolveRegimePrice(int $regimeId, int $duree, array $configByRegime, array $regime): float
+    {
+        $configs = $configByRegime[$regimeId] ?? [];
+        if ($configs === []) {
+            return $this->estimateRegimePrice($regime, $duree);
+        }
+        foreach ($configs as $config) {
+            if ($config['duree_jours'] === $duree) {
+                return $config['prix'];
+            }
+        }
+        $previous = null;
+        foreach ($configs as $config) {
+            if ($config['duree_jours'] > $duree) {
+                if ($previous === null) {
+                    return round(($config['prix'] / max(1, $config['duree_jours'])) * $duree, 2);
+                }
+                $durationGap = $config['duree_jours'] - $previous['duree_jours'];
+                $priceGap = $config['prix'] - $previous['prix'];
+                $ratio = ($duree - $previous['duree_jours']) / max(1, $durationGap);
+                return round($previous['prix'] + ($priceGap * $ratio), 2);
+            }
+            $previous = $config;
+        }
+        $last = end($configs);
+        $beforeLast = count($configs) > 1 ? $configs[count($configs) - 2] : null;
+        if ($beforeLast !== null) {
+            $durationGap = max(1, $last['duree_jours'] - $beforeLast['duree_jours']);
+            $slope = ($last['prix'] - $beforeLast['prix']) / $durationGap;
+            return round($last['prix'] + (($duree - $last['duree_jours']) * $slope), 2);
+        }
+        return round(($last['prix'] / max(1, $last['duree_jours'])) * $duree, 2);
+    }
+
+    protected function estimateRegimePrice(array $regime, int $duree): float
+    {
+        $baseDay = max(2000, 1800 + ((float) $regime['viande'] * 8) + ((float) $regime['poisson'] * 10) + ((float) $regime['volaille'] * 7));
+        return round($baseDay * $duree, 2);
+    }
+
+    protected function estimateActivityPrice(array $activites, int $duree): float
+    {
+        $total = 0.0;
+        foreach ($activites as $activite) {
+            $cycle = max(1, (int) $activite['duree']);
+            $blocks = max(1, (int) ceil($duree / $cycle));
+            $total += 1200 * max(1, (int) $activite['frequence']) * $blocks;
+        }
+        return $total;
+    }
+
+    protected function buildProgrammeTitle(array $regime, int $duree, bool $hasActivity): string
+    {
+        return $this->buildRegimeTitle($regime) . ' - ' . $duree . ' jours' . ($hasActivity ? ' avec activite' : ' sans activite');
+    }
+
+    protected function buildRegimeTitle(array $regime): string
+    {
+        $title = trim((string) ($regime['description'] ?? ''));
+        return $title !== '' ? mb_strimwidth($title, 0, 44, '...') : 'Regime #' . $regime['id'];
+    }
+
+    protected function buildActivityMeta(array $activites): string
+    {
+        if ($activites === []) {
+            return 'Programme nutritionnel seul';
+        }
+        $parts = [];
+        foreach ($activites as $activite) {
+            $parts[] = (string) $activite['description'] . ' - ' . (int) $activite['frequence'] . ' fois/semaine sur ' . (int) $activite['duree'] . ' jour(s)';
+        }
+        return implode(' | ', $parts);
+    }
+
+    protected function buildEngineSummary(float $targetKg, float $regimeEffectPerDay, float $activityEffectPerDay, int $duree, float $variationAtteinte, float $regimePrice, float $activityPrice): string
+    {
+        return 'Objectif ' . $targetKg . ' kg, regime ' . round($regimeEffectPerDay, 3) . ' kg/jour, activites ' . round($activityEffectPerDay, 3) . ' kg/jour, total ' . round($variationAtteinte, 2) . ' kg en ' . $duree . ' jours, prix regime ' . round($regimePrice, 2) . ' Ar, prix activites ' . round($activityPrice, 2) . ' Ar.';
+    }
+
+    protected function findSuggestion(array $suggestions, string $key): ?array
+    {
+        foreach ($suggestions as $suggestion) {
+            if (($suggestion['key'] ?? '') === $key) {
+                return $suggestion;
+            }
+        }
+        return null;
     }
 }
