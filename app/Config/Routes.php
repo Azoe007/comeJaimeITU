@@ -44,22 +44,14 @@ $routes->group('admin', static function ($routes) {
             'activeMenu' => 'dashboard',
         ]);
     });
-    $routes->get('regimes', static function () {
-        return view('admin/regimes', [
-            'pageTitle' => 'CRUD Regimes - Health Coach',
-            'pageHeading' => 'Gestion des regimes',
-            'breadcrumb' => 'Regimes',
-            'activeMenu' => 'regimes',
-        ]);
-    });
-    $routes->get('sports', static function () {
-        return view('admin/sports', [
-            'pageTitle' => 'CRUD Sports - Health Coach',
-            'pageHeading' => 'Gestion des activites sportives',
-            'breadcrumb' => 'Sports',
-            'activeMenu' => 'sports',
-        ]);
-    });
+    $routes->get('regimes', 'AdminRegimeController::index');
+    $routes->post('regimes', 'AdminRegimeController::store');
+    $routes->post('regimes/(:num)/update', 'AdminRegimeController::update/$1');
+    $routes->post('regimes/(:num)/delete', 'AdminRegimeController::delete/$1');
+    $routes->get('sports', 'AdminSportController::index');
+    $routes->post('sports', 'AdminSportController::store');
+    $routes->post('sports/(:num)/update', 'AdminSportController::update/$1');
+    $routes->post('sports/(:num)/delete', 'AdminSportController::delete/$1');
     $routes->get('codes', 'CodeController::adminIndex');
     $routes->get('settings', static function () {
         return view('admin/settings', [
