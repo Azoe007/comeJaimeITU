@@ -6,7 +6,7 @@
     <title><?= esc($pageTitle ?? 'Health Coach') ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= base_url('assets/css/front-office.css') ?>">
 </head>
 <body class="app-shell auth-shell">
@@ -39,18 +39,26 @@
                 <div class="auth-copy" data-reveal="up">
                     <span class="eyebrow"><?= esc($breadcrumb ?? 'Authentification') ?></span>
                     <h1><?= esc($pageHeading ?? 'Bienvenue') ?></h1>
-                    <p>Un parcours clair en plusieurs etapes pour estimer l'IMC, choisir un objectif, activer le porte-monnaie et acceder aux regimes proposes.</p>
+                    <p>Un parcours clair pour calculer l'IMC, choisir un objectif, activer le porte-monnaie et acceder aux regimes proposes.</p>
+
+                    <div class="auth-quote">
+                        <strong>Votre equilibre, votre rythme.</strong>
+                        <span>Un profil simple, des recommandations lisibles, et un suivi qui reste a votre mesure.</span>
+                    </div>
 
                     <div class="auth-benefits">
                         <article class="mini-card">
+                            <span class="mini-card-icon" aria-hidden="true">01</span>
                             <strong>IMC instantane</strong>
                             <span>Lecture simple de votre progression.</span>
                         </article>
                         <article class="mini-card">
+                            <span class="mini-card-icon" aria-hidden="true">02</span>
                             <strong>Objectifs guides</strong>
                             <span>Prise de poids, perte ou IMC ideal.</span>
                         </article>
                         <article class="mini-card">
+                            <span class="mini-card-icon" aria-hidden="true">03</span>
                             <strong>Remise Gold</strong>
                             <span>15% sur tous les regimes.</span>
                         </article>
@@ -63,33 +71,6 @@
             </div>
         </section>
     </main>
-
-    <footer class="site-footer">
-        <div class="container footer-grid">
-            <div>
-                <a class="brand footer-brand" href="<?= base_url('/') ?>">
-                    <span class="brand-mark">HC</span>
-                    <span class="brand-copy">
-                        <strong>Health Coach</strong>
-                        <small>Acces simple aux programmes alimentaires</small>
-                    </span>
-                </a>
-                <p>Parcours d'inscription en plusieurs etapes avec une presentation plus claire des objectifs et du suivi sante.</p>
-            </div>
-            <div class="footer-links">
-                <strong>Acces rapide</strong>
-                <a href="<?= base_url('/') ?>">Accueil</a>
-                <a href="<?= base_url('register') ?>">Inscription</a>
-                <a href="<?= base_url('login') ?>">Connexion</a>
-            </div>
-            <div class="footer-links">
-                <strong>Fonctionnalites</strong>
-                <span>IMC</span>
-                <span>Objectifs personnalises</span>
-                <span>Regimes avec remise Gold</span>
-            </div>
-        </div>
-    </footer>
 
     <script src="<?= base_url('assets/js/front-office.js') ?>"></script>
     <?= $this->renderSection('scripts') ?>

@@ -82,6 +82,7 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
+<script src="<?= base_url('assets/js-ajax/auth.js') ?>"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const emailInput = document.getElementById('email');
