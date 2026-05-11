@@ -32,34 +32,33 @@ $routes->post('wallet/acheterGold', 'WalletController::acheterGold');
 
 $routes->get('code', 'CodeController::index');
 
-$routes->group('admin', static function ($routes) {
-    $routes->get('login', static function () {
-        return view('admin/login');
-    });
-    $routes->get('/', static function () {
-        return view('admin/dashboard', [
-            'pageTitle' => 'Dashboard - Health Coach',
-            'pageHeading' => 'Tableau de bord',
-            'breadcrumb' => 'Administration',
-            'activeMenu' => 'dashboard',
-        ]);
-    });
-    $routes->get('regimes', static function () {
-        return view('admin/regimes', [
-            'pageTitle' => 'CRUD Regimes - Health Coach',
-            'pageHeading' => 'Gestion des regimes',
-            'breadcrumb' => 'Regimes',
-            'activeMenu' => 'regimes',
-        ]);
-    });
-    $routes->get('sports', static function () {
-        return view('admin/sports', [
-            'pageTitle' => 'CRUD Sports - Health Coach',
-            'pageHeading' => 'Gestion des activites sportives',
-            'breadcrumb' => 'Sports',
-            'activeMenu' => 'sports',
-        ]);
-    });
+// Routes Admin - Sans filtrage (login accessible)
+$routes->get('admin/login', 'Admin::loginPage');
+$routes->post('admin/login', 'Admin::login');
+$routes->get('admin/logout', 'Admin::logout');
+
+// Routes Admin - Avec filtrage AuthFilter
+$routes->group('admin', ['filter' => 'auth'], static function ($routes) {
+    $routes->get('/', 'Admin::dashboard');
+    $routes->get('users', 'Admin::users');
+    $routes->get('users/(:num)', 'Admin::userDetail/$1');
+    $routes->get('finances', 'Admin::finances');
+    $routes->get('programmes', 'Admin::programmes');
+    $routes->get('health', 'Admin::health');
+    
+    // Routes CRUD - Regimes
+    $routes->get('regimes', 'AdminRegimeController::index');
+    $routes->post('regimes', 'AdminRegimeController::store');
+    $routes->post('regimes/(:num)/update', 'AdminRegimeController::update/$1');
+    $routes->post('regimes/(:num)/delete', 'AdminRegimeController::delete/$1');
+    
+    // Routes CRUD - Sports
+    $routes->get('sports', 'AdminSportController::index');
+    $routes->post('sports', 'AdminSportController::store');
+    $routes->post('sports/(:num)/update', 'AdminSportController::update/$1');
+    $routes->post('sports/(:num)/delete', 'AdminSportController::delete/$1');
+    
+    // Routes CRUD - Codes et Settings
     $routes->get('codes', 'CodeController::adminIndex');
     $routes->get('settings', static function () {
         return view('admin/settings', [
