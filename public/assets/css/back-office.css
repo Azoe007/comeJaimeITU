@@ -95,6 +95,19 @@ body {
 .admin-stats, .admin-grid { display: grid; gap: 1rem; }
 .admin-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .admin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.admin-flash {
+    padding: 1rem 1.2rem;
+    border-radius: 18px;
+    font-weight: 700;
+}
+.admin-flash.success {
+    background: rgba(46, 204, 113, 0.12);
+    color: #13824c;
+}
+.admin-flash.error {
+    background: rgba(235, 77, 75, 0.12);
+    color: var(--back-danger);
+}
 .metric-card, .admin-card, .admin-auth-card {
     background: var(--back-bg);
     border: 1px solid var(--back-border);
@@ -110,6 +123,61 @@ body {
     justify-content: space-between;
     gap: 1rem;
     margin-bottom: 1rem;
+}
+.section-head.compact {
+    margin-bottom: 0.75rem;
+}
+.admin-form,
+.admin-form-grid,
+.price-config-list {
+    display: grid;
+    gap: 1rem;
+}
+.admin-form label {
+    display: grid;
+    gap: 0.45rem;
+}
+.admin-form span {
+    font-weight: 700;
+    color: var(--back-text);
+}
+.admin-form input,
+.admin-form textarea,
+.admin-form select {
+    width: 100%;
+    padding: 0.95rem 1rem;
+    border-radius: 16px;
+    border: 1px solid rgba(72, 52, 212, 0.16);
+    background: #fff;
+    font: inherit;
+}
+.admin-form textarea {
+    resize: vertical;
+}
+.admin-form-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.form-error {
+    color: var(--back-danger);
+    font-size: 0.85rem;
+}
+.price-config-box {
+    padding: 1.25rem;
+    border-radius: 22px;
+    background: rgba(72, 52, 212, 0.05);
+}
+.price-config-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+.admin-form-actions {
+    display: flex;
+    justify-content: flex-start;
+}
+.inline-stack {
+    display: grid;
+    gap: 0.35rem;
 }
 .chart-bars {
     display: grid;
@@ -158,6 +226,27 @@ body {
 .status-warn { background: rgba(230, 126, 34, 0.12); color: #b45c10; }
 .status-danger, .action-pills .danger { background: rgba(235, 77, 75, 0.12); color: var(--back-danger); }
 .action-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.action-pills form {
+    margin: 0;
+}
+.action-pills a,
+.action-pills button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    border: 0;
+    background: rgba(72, 52, 212, 0.08);
+    color: var(--back-primary);
+    font-weight: 800;
+    font: inherit;
+    cursor: pointer;
+}
+.action-pills button.danger {
+    background: rgba(235, 77, 75, 0.12);
+    color: var(--back-danger);
+}
 .admin-auth-body { min-height: 100vh; padding: 2rem; }
 .admin-auth-wrap {
     min-height: calc(100vh - 4rem);
@@ -210,5 +299,7 @@ body {
 @media (max-width: 980px) {
     .admin-layout { grid-template-columns: 1fr; }
     .admin-stats, .admin-grid { grid-template-columns: 1fr; }
+    .admin-form-grid,
+    .price-config-row { grid-template-columns: 1fr; }
     .admin-footer { flex-direction: column; align-items: flex-start; }
 }

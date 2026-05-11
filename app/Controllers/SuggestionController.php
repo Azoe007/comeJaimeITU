@@ -221,11 +221,25 @@ class SuggestionController extends BaseController
         $poids = (float) ($funnel['poids'] ?? 0);
         $taille = (float) ($funnel['taille'] ?? 0);
         $poidsObjectif = null;
+        $objectifType = (string) ($funnel['objectif_type'] ?? '');
+        $targetKg = (float) ($funnel['target_kg'] ?? 0);
 
-        if (($funnel['objectif_type'] ?? '') === 'reduire') {
-            $poidsObjectif = $poids - (float) ($funnel['target_kg'] ?? 0);
-        } elseif (($funnel['objectif_type'] ?? '') === 'augmenter') {
-            $poidsObjectif = $poids + (float) ($funnel['target_kg'] ?? 0);
+        if ($objectifType === 'reduire') {
+            $poidsObjectif = $poids - $targetKg;
+        } elseif ($objectifType === 'augmenter') {
+            $poidsObjectif = $poids + $targetKg;
+        } elseif ($objectifType === 'ideal' && $taille > 0) {
+            $tailleM = $taille / 100;
+            $poidsObjectif = round(22 * $tailleM * $tailleM, 2);
+        }
+
+        if ($poidsObjectif === null || $poidsObjectif <= 0) {
+            $context = $this->getObjetcifUser($funnel);
+            if ($context['type'] === 'reduire') {
+                $poidsObjectif = $poids - (float) $context['targetKg'];
+            } else {
+                $poidsObjectif = $poids + (float) $context['targetKg'];
+            }
         }
 
         $this->objectifHistoryModel->insert([
