@@ -53,14 +53,8 @@ $routes->group('admin', static function ($routes) {
     $routes->post('sports/(:num)/update', 'AdminSportController::update/$1');
     $routes->post('sports/(:num)/delete', 'AdminSportController::delete/$1');
     $routes->get('codes', 'CodeController::adminIndex');
-    $routes->get('settings', static function () {
-        return view('admin/settings', [
-            'pageTitle' => 'Parametres - Health Coach',
-            'pageHeading' => 'Parametres metier',
-            'breadcrumb' => 'Parametres',
-            'activeMenu' => 'settings',
-        ]);
-    });
+    $routes->get('parametres', 'AdminParametreController::index');
+    $routes->post('parametres', 'AdminParametreController::save');
 });
 
 $routes->group('', static function ($routes) {

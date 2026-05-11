@@ -1,7 +1,11 @@
 <?= $this->extend('layouts/front') ?>
 <?= $this->section('content') ?>
 
-<?php $transactions = $transactions ?? []; ?>
+<?php
+$transactions = $transactions ?? [];
+$goldPrice = $goldPrice ?? 30000;
+$goldReduction = $goldReduction ?? 15;
+?>
 
 <section class="page-hero compact">
     <div class="container page-hero-inner" data-reveal="up">
@@ -63,13 +67,13 @@
         <div class="feature-card" data-reveal="up">
             <span class="card-tag">Gold</span>
             <h2>Passer au compte Gold</h2>
-            <p>Activation unique a <strong>30 000 Ar</strong>. Debloque 15% de remise sur tous les regimes.</p>
+            <p>Activation unique a <strong><?= number_format((float) $goldPrice, 0, ',', ' ') ?> Ar</strong>. Debloque <?= number_format((float) $goldReduction, 0, ',', ' ') ?>% de remise sur tous les regimes.</p>
             <?php if ((bool) session('is_gold')): ?>
                 <div class="alert-box alert-success">Votre compte est deja Gold.</div>
             <?php else: ?>
                 <form action="<?= base_url('wallet/acheterGold') ?>" method="post">
                     <?= csrf_field() ?>
-                    <button type="submit" class="btn btn-accent">Devenir Gold (30 000 Ar)</button>
+                    <button type="submit" class="btn btn-accent">Devenir Gold (<?= number_format((float) $goldPrice, 0, ',', ' ') ?> Ar)</button>
                 </form>
             <?php endif; ?>
         </div>

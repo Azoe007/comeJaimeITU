@@ -15,7 +15,7 @@
                     <h2>Regles metier</h2>
                 </div>
             </div>
-            <form method="post" action="<?= base_url('admin/settings') ?>" class="admin-form">
+            <form method="post" action="<?= base_url('admin/parametres') ?>" class="admin-form">
                 <?= csrf_field() ?>
                 <div class="admin-form-grid">
                     <label>

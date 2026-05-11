@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\UserModel;
 use App\Models\WalletModel;
+use App\Models\ParametreModel;
 
 class WalletController extends BaseController
 {
@@ -17,6 +18,7 @@ class WalletController extends BaseController
             $transactions = [];
             session()->set('demo_wallet_transactions', $transactions);
         }
+        $goldSettings = $this->getGoldSettings();
 
         return view('wallet/index', [
             'pageTitle' => 'Portefeuille - Health Coach',
@@ -24,6 +26,8 @@ class WalletController extends BaseController
             'breadcrumb' => 'Portefeuille',
             'solde' => $balance,
             'transactions' => array_reverse($transactions),
+            'goldPrice' => $goldSettings['prix_gold'],
+            'goldReduction' => $goldSettings['reduction_gold'],
         ]);
     }
 
@@ -39,7 +43,8 @@ class WalletController extends BaseController
             return redirect()->to(base_url('login'))->with('error', 'Veuillez vous connecter pour devenir Gold.');
         }
 
-        $price = 30000;
+        $goldSettings = $this->getGoldSettings();
+        $price = (float) $goldSettings['prix_gold'];
         $walletModel = new WalletModel();
         $balance = (int) ($walletModel->get_solde($userId) ?? 0);
         if ($balance < $price) {
@@ -92,5 +97,18 @@ class WalletController extends BaseController
         session()->set('demo_used_codes', $usedCodes);
 
         return redirect()->to('/wallet')->with('success', 'Votre compte a ete credite de ' . $amount . ' Ar');
+    }
+
+    protected function getGoldSettings(): array
+    {
+        $defaults = [
+            'prix_gold' => 30000,
+            'duree_gold' => 30,
+            'reduction_gold' => 15,
+        ];
+
+        $current = (new ParametreModel())->orderBy('id', 'DESC')->first();
+
+        return array_merge($defaults, $current ?? []);
     }
 }

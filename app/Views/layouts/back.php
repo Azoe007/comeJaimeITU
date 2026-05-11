@@ -25,7 +25,7 @@
                 <a href="<?= base_url('admin/regimes') ?>" class="<?= ($activeMenu ?? '') === 'regimes' ? 'is-active' : '' ?>">Regimes</a>
                 <a href="<?= base_url('admin/sports') ?>" class="<?= ($activeMenu ?? '') === 'sports' ? 'is-active' : '' ?>">Sports</a>
                 <a href="<?= base_url('admin/codes') ?>" class="<?= ($activeMenu ?? '') === 'codes' ? 'is-active' : '' ?>">Codes</a>
-                <a href="<?= base_url('admin/settings') ?>" class="<?= ($activeMenu ?? '') === 'settings' ? 'is-active' : '' ?>">Parametres</a>
+                <a href="<?= base_url('admin/parametres') ?>" class="<?= ($activeMenu ?? '') === 'parametres' ? 'is-active' : '' ?>">Parametres</a>
             </nav>
 
             <div class="admin-note">
