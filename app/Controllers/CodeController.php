@@ -42,12 +42,20 @@ class CodeController extends BaseController
             ['code' => 'HC-5000-C', 'valeur_en_ar' => 50000, 'id_statut_code' => 3, 'prenom' => '', 'nom' => ''],
         ];
 
+        $stats = [
+            'total_codes' => count($codes),
+            'available_codes' => count(array_filter($codes, fn($c) => (int) $c['id_statut_code'] === 1)),
+            'used_codes' => count(array_filter($codes, fn($c) => (int) $c['id_statut_code'] === 2)),
+            'blocked_codes' => count(array_filter($codes, fn($c) => (int) $c['id_statut_code'] === 3)),
+        ];
+
         $data = [
-            'pageTitle'   => 'Validation des codes - Health Coach',
-            'pageHeading' => 'Validation des codes',
+            'pageTitle'   => 'Codes de recharge - Health Coach',
+            'pageHeading' => 'Codes de recharge',
             'breadcrumb'  => 'Codes',
             'activeMenu'  => 'codes',
             'codes'       => $codes,
+            'stats'       => $stats,
         ];
 
         return view('admin/codes', $data);
