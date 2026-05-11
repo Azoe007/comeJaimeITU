@@ -1,6 +1,8 @@
 <?= $this->extend('layouts/front') ?>
 <?= $this->section('content') ?>
 
+<?php $goldReduction = $goldReduction ?? 0; ?>
+
 <section class="page-hero compact tunnel-hero">
     <div class="container page-hero-inner" data-reveal="up">
         <div>
@@ -32,7 +34,7 @@
             <div class="list-stack">
                 <article class="list-item"><strong>Solde actuel</strong><span><?= number_format((float) $walletBalance, 0, ',', ' ') ?> Ar</span></article>
                 <article class="list-item"><strong>Compte Gold</strong><span><?= $isGold ? 'Oui' : 'Non' ?></span></article>
-                <article class="list-item"><strong>Reduction</strong><span><?= $isGold ? '15%' : '0%' ?></span></article>
+                <article class="list-item"><strong>Reduction</strong><span><?= $isGold ? esc((string) $goldReduction) . '%' : '0%' ?></span></article>
             </div>
             <div class="action-row">
                 <a class="btn btn-soft" href="<?= base_url('wallet') ?>">Recharger mon porte-monnaie</a>

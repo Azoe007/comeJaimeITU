@@ -5,9 +5,11 @@ namespace App\Controllers;
 use App\Models\ActiviteSportiveModel;
 use App\Models\ConfigRegimeModel;
 use App\Models\ObjectifHistoryModel;
+use App\Models\ParametreModel;
 use App\Models\ProgrammeModel;
 use App\Models\RegimeModel;
 use App\Models\TransactionModel;
+use App\Models\UserModel;
 use App\Models\WalletModel;
 
 class SuggestionController extends BaseController
@@ -19,6 +21,8 @@ class SuggestionController extends BaseController
     protected WalletModel $walletModel;
     protected ProgrammeModel $programmeModel;
     protected TransactionModel $transactionModel;
+    protected ParametreModel $parametreModel;
+    protected array $goldSettings;
 
     public function __construct()
     {
@@ -29,6 +33,8 @@ class SuggestionController extends BaseController
         $this->walletModel = new WalletModel();
         $this->programmeModel = new ProgrammeModel();
         $this->transactionModel = new TransactionModel();
+        $this->parametreModel = new ParametreModel();
+        $this->goldSettings = $this->getGoldSettings();
     }
 
     public function index()
@@ -100,6 +106,8 @@ class SuggestionController extends BaseController
             return redirect()->to(base_url('login'))->with('error', 'Veuillez vous connecter pour valider votre commande.');
         }
 
+        $this->syncGoldStatus($userId);
+
         $suggestion = session('selected_temp_programme');
         $funnel = session('objectif_funnel') ?? [];
 
@@ -117,6 +125,7 @@ class SuggestionController extends BaseController
             'walletBalance' => $walletBalance,
             'priceToPay' => $priceToPay,
             'isGold' => (bool) session('is_gold'),
+            'goldReduction' => $this->getGoldReduction(),
             'canAfford' => $walletBalance >= $priceToPay,
             'historyId' => $historyId,
         ]);
@@ -129,6 +138,8 @@ class SuggestionController extends BaseController
             session()->set('redirect_after_auth', base_url('objectif/commande'));
             return redirect()->to(base_url('login'))->with('error', 'Veuillez vous connecter pour payer ce programme.');
         }
+
+        $this->syncGoldStatus($userId);
 
         $suggestion = session('selected_temp_programme');
         if (! is_array($suggestion) || $suggestion === []) {
@@ -177,7 +188,7 @@ class SuggestionController extends BaseController
                 'id_user' => $userId,
                 'id_programme' => $programmeId,
                 'montant' => $priceToPay,
-                'reduction' => (bool) session('is_gold') ? 15 : 0,
+                'reduction' => (bool) session('is_gold') ? $this->getGoldReduction() : 0,
                 'etat' => 'valide',
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
@@ -360,6 +371,8 @@ class SuggestionController extends BaseController
         $hasActivity = $activityNames !== [];
         $key = 'p_' . md5(json_encode(['regime' => $regime['id'], 'activities' => $activityIds, 'duree' => $duree, 'target' => $targetKg, 'type' => $context['type']]));
 
+        $goldFactor = $this->getGoldFactor();
+
         return [
             'key' => $key,
             'id_regime' => (int) $regime['id'],
@@ -371,7 +384,7 @@ class SuggestionController extends BaseController
             'goalText' => $context['label'],
             'duree' => $duree,
             'prix' => $prix,
-            'prixGold' => (int) round($prix * 0.85),
+            'prixGold' => (int) round($prix * $goldFactor),
             'regime' => $this->buildRegimeTitle($regime),
             'sport' => $hasActivity ? implode(' + ', $activityNames) : 'Sans activite sportive',
             'activityMeta' => $this->buildActivityMeta($activites),
@@ -384,6 +397,40 @@ class SuggestionController extends BaseController
             'temporary' => true,
             'engineSummary' => $this->buildEngineSummary($context['targetKg'], $regimeEffectPerDay, $activityEffectPerDay, $duree, $variationAtteinte, $regimePrice, $activityPrice),
         ];
+    }
+
+    protected function getGoldSettings(): array
+    {
+        $defaults = [
+            'prix_gold' => 30000,
+            'duree_gold' => 30,
+            'reduction_gold' => 15,
+        ];
+
+        $current = $this->parametreModel->orderBy('id', 'DESC')->first();
+
+        return array_merge($defaults, $current ?? []);
+    }
+
+    protected function getGoldReduction(): float
+    {
+        $value = (float) ($this->goldSettings['reduction_gold'] ?? 0);
+
+        return min(100.0, max(0.0, $value));
+    }
+
+    protected function getGoldFactor(): float
+    {
+        $reduction = $this->getGoldReduction();
+        $factor = 1 - ($reduction / 100);
+
+        return min(1.0, max(0.0, $factor));
+    }
+
+    protected function syncGoldStatus(int $userId): void
+    {
+        $isGold = (new UserModel())->refreshGoldStatus($userId);
+        session()->set('is_gold', $isGold);
     }
 
     protected function valeurParJour(float $variation, int $duree): float

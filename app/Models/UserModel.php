@@ -11,7 +11,7 @@ class UserModel extends Model
 {
     protected $table = 'users';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['nom', 'prenom', 'email', 'password', 'date_naissance', 'genre', 'role_id','est_gold'];
+    protected $allowedFields = ['nom', 'prenom', 'email', 'password', 'date_naissance', 'genre', 'role_id', 'est_gold', 'gold_expires_at'];
     protected $useTimestamps = true;
     protected $returnType = 'array';
 
@@ -70,6 +70,32 @@ class UserModel extends Model
         $user = $this->where('email', $email)->first();
 
         return $user ?: null;
+    }
+
+    public function refreshGoldStatus(int $userId): bool
+    {
+        $user = $this->find($userId);
+        if (! $user) {
+            return false;
+        }
+
+        $isGold = (bool) ($user['est_gold'] ?? false);
+        if (! $isGold) {
+            return false;
+        }
+
+        $expiresAt = $user['gold_expires_at'] ?? null;
+        if ($expiresAt === null || $expiresAt === '') {
+            return true;
+        }
+
+        $now = date('Y-m-d H:i:s');
+        if ($expiresAt < $now) {
+            $this->update($userId, ['est_gold' => 0, 'gold_expires_at' => null]);
+            return false;
+        }
+
+        return true;
     }
 
     public function getProfile(int $userId, ?bool $isGold = null): ?array

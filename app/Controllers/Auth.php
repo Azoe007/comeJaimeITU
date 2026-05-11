@@ -44,13 +44,15 @@ class Auth extends BaseController
             return redirect()->back()->withInput()->with('error', 'Email ou mot de passe incorrect.');
         }
 
+        $isGold = $this->userModel->refreshGoldStatus((int) $user['id']);
+
         session()->set([
             'user_id' => $user['id'],
             'user_nom' => $user['nom'],
             'user_prenom' => $user['prenom'],
             'user_email' => $user['email'],
             'role_id' => $user['role_id'],
-            'is_gold' => (bool) ($user['est_gold'] ?? false),
+            'is_gold' => $isGold,
             'isLoggedIn' => true,
         ]);
 

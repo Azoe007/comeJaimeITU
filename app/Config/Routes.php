@@ -60,14 +60,8 @@ $routes->group('admin', ['filter' => 'auth'], static function ($routes) {
     
     // Routes CRUD - Codes et Settings
     $routes->get('codes', 'CodeController::adminIndex');
-    $routes->get('settings', static function () {
-        return view('admin/settings', [
-            'pageTitle' => 'Parametres - Health Coach',
-            'pageHeading' => 'Parametres metier',
-            'breadcrumb' => 'Parametres',
-            'activeMenu' => 'settings',
-        ]);
-    });
+    $routes->get('settings', 'AdminParametreController::index');
+    $routes->post('settings', 'AdminParametreController::save');
 });
 
 $routes->group('', static function ($routes) {

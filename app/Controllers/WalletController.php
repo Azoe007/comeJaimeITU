@@ -4,12 +4,16 @@ namespace App\Controllers;
 
 use App\Models\UserModel;
 use App\Models\WalletModel;
-
+use App\Models\ParametreModel;
 class WalletController extends BaseController
 {
     public function index()
     {
         $userId = (int) session('user_id');
+        if ($userId > 0) {
+            $isGold = (new UserModel())->refreshGoldStatus($userId);
+            session()->set('is_gold', $isGold);
+        }
         $walletModel = new WalletModel();
         $balance = $userId > 0 ? (int) ($walletModel->get_solde($userId) ?? 0) : (int) (session('demo_wallet_balance') ?? 0);
         $transactions = session('demo_wallet_transactions');
@@ -17,6 +21,7 @@ class WalletController extends BaseController
             $transactions = [];
             session()->set('demo_wallet_transactions', $transactions);
         }
+        $goldSettings = $this->getGoldSettings();
 
         return view('wallet/index', [
             'pageTitle' => 'Portefeuille - Health Coach',
@@ -24,22 +29,27 @@ class WalletController extends BaseController
             'breadcrumb' => 'Portefeuille',
             'solde' => $balance,
             'transactions' => array_reverse($transactions),
+            'goldPrice' => $goldSettings['prix_gold'],
+            'goldReduction' => $goldSettings['reduction_gold'],
         ]);
     }
 
     public function acheterGold()
     {
-        if ((bool) session('is_gold')) {
-            return redirect()->to('/wallet')->with('success', 'Votre compte est deja Gold.');
-        }
-
         $userId = (int) session('user_id');
         if ($userId <= 0) {
             session()->set('redirect_after_auth', base_url('wallet'));
             return redirect()->to(base_url('login'))->with('error', 'Veuillez vous connecter pour devenir Gold.');
         }
 
-        $price = 30000;
+        $isGold = (new UserModel())->refreshGoldStatus($userId);
+        session()->set('is_gold', $isGold);
+        if ($isGold) {
+            return redirect()->to('/wallet')->with('success', 'Votre compte est deja Gold.');
+        }
+
+        $goldSettings = $this->getGoldSettings();
+        $price = (float) $goldSettings['prix_gold'];
         $walletModel = new WalletModel();
         $balance = (int) ($walletModel->get_solde($userId) ?? 0);
         if ($balance < $price) {
@@ -47,7 +57,9 @@ class WalletController extends BaseController
         }
 
         $walletModel->retirer_solde($userId, $price);
-        (new UserModel())->update($userId, ['est_gold' => 1]);
+        $durationDays = max(1, (int) $goldSettings['duree_gold']);
+        $expiresAt = date('Y-m-d H:i:s', strtotime('+' . $durationDays . ' days'));
+        (new UserModel())->update($userId, ['est_gold' => 1, 'gold_expires_at' => $expiresAt]);
         session()->set('is_gold', true);
 
         $transactions = session('demo_wallet_transactions') ?? [];
@@ -92,5 +104,18 @@ class WalletController extends BaseController
         session()->set('demo_used_codes', $usedCodes);
 
         return redirect()->to('/wallet')->with('success', 'Votre compte a ete credite de ' . $amount . ' Ar');
+    }
+
+    protected function getGoldSettings(): array
+    {
+        $defaults = [
+            'prix_gold' => 30000,
+            'duree_gold' => 30,
+            'reduction_gold' => 15,
+        ];
+
+        $current = (new ParametreModel())->orderBy('id', 'DESC')->first();
+
+        return array_merge($defaults, $current ?? []);
     }
 }
