@@ -1,4 +1,4 @@
-<?= $this->extend('layouts/back') ?>
+<?= $this->extend('layouts/admin') ?>
 <?= $this->section('content') ?>
 
 <?php
@@ -13,162 +13,170 @@
     }
 ?>
 
-<section class="admin-section">
-    <?php if (session()->has('success')): ?><div class="admin-flash success"><?= esc(session('success')) ?></div><?php endif; ?>
-    <?php if (session()->has('error')): ?><div class="admin-flash error"><?= esc(session('error')) ?></div><?php endif; ?>
-
-    <div class="admin-card" data-reveal="up">
-        <div class="section-head">
-            <div>
-                <span class="admin-kicker">CRUD Regimes</span>
-                <h2><?= $editingRegime ? 'Modifier un regime' : 'Ajouter un regime' ?></h2>
-            </div>
-            <?php if ($editingRegime): ?><a class="admin-ghost" href="<?= base_url('admin/regimes') ?>">Nouveau regime</a><?php endif; ?>
+<div class="admin-page">
+    <!-- Formulaire ajout/édition -->
+    <div class="form-container">
+        <div style="margin-bottom: 1.5rem;">
+            <h2><?= $editingRegime ? 'Modifier un régime' : 'Ajouter un régime' ?></h2>
+            <p style="color: #999; margin-top: 0.3rem;">Gérez les régimes et leurs tarifications</p>
         </div>
 
         <form method="post" action="<?= $editingRegime ? base_url('admin/regimes/' . $editingRegime['id'] . '/update') : base_url('admin/regimes') ?>" class="admin-form">
             <?= csrf_field() ?>
-            <label>
-                <span>Description</span>
-                <textarea name="description" rows="3"><?= esc(old('description', $editingRegime['description'] ?? '', 'raw')) ?></textarea>
-                <?php if (session('errors.description')): ?><small class="form-error"><?= esc(session('errors.description')) ?></small><?php endif; ?>
-            </label>
 
-            <div class="admin-form-grid">
-                <label>
-                    <span>Type</span>
-                    <select name="type" required>
-                        <?php $selectedType = old('type', $editingRegime['type'] ?? 'augmentation', 'raw'); ?>
-                        <option value="augmentation" <?= $selectedType === 'augmentation' ? 'selected' : '' ?>>Augmentation</option>
-                        <option value="diminution" <?= $selectedType === 'diminution' ? 'selected' : '' ?>>Diminution</option>
-                    </select>
-                    <?php if (session('errors.type')): ?><small class="form-error"><?= esc(session('errors.type')) ?></small><?php endif; ?>
-                </label>
-                <label>
-                    <span>Variation de poids (kg)</span>
-                    <input type="number" step="0.01" min="0.01" name="variation" value="<?= esc(old('variation', $editingRegime['variation'] ?? '', 'raw')) ?>" required>
-                    <?php if (session('errors.variation')): ?><small class="form-error"><?= esc(session('errors.variation')) ?></small><?php endif; ?>
-                </label>
-                <label>
-                    <span>Duree de base (jours)</span>
-                    <input type="number" min="1" name="duree" value="<?= esc(old('duree', $editingRegime['duree'] ?? 1, 'raw')) ?>" required>
-                    <?php if (session('errors.duree')): ?><small class="form-error"><?= esc(session('errors.duree')) ?></small><?php endif; ?>
-                </label>
-            </div>
+            <fieldset class="form-section">
+                <legend>Informations du régime</legend>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" rows="3" class="form-input" required><?= esc(old('description', $editingRegime['description'] ?? '', 'raw')) ?></textarea>
+                    <?php if (session('errors.description')): ?><small class="form-error">✕ <?= esc(session('errors.description')) ?></small><?php endif; ?>
+                </div>
+            </fieldset>
 
-            <div class="admin-form-grid">
-                <label>
-                    <span>% viande</span>
-                    <input type="number" step="0.01" min="0" max="100" name="viande" value="<?= esc(old('viande', $editingRegime['viande'] ?? '', 'raw')) ?>" required>
-                    <?php if (session('errors.viande')): ?><small class="form-error"><?= esc(session('errors.viande')) ?></small><?php endif; ?>
-                </label>
-                <label>
-                    <span>% poisson</span>
-                    <input type="number" step="0.01" min="0" max="100" name="poisson" value="<?= esc(old('poisson', $editingRegime['poisson'] ?? '', 'raw')) ?>" required>
-                    <?php if (session('errors.poisson')): ?><small class="form-error"><?= esc(session('errors.poisson')) ?></small><?php endif; ?>
-                </label>
-                <label>
-                    <span>% volaille</span>
-                    <input type="number" step="0.01" min="0" max="100" name="volaille" value="<?= esc(old('volaille', $editingRegime['volaille'] ?? '', 'raw')) ?>" required>
-                    <?php if (session('errors.volaille')): ?><small class="form-error"><?= esc(session('errors.volaille')) ?></small><?php endif; ?>
-                </label>
-            </div>
-            <?php if (session('errors.macros')): ?><small class="form-error"><?= esc(session('errors.macros')) ?></small><?php endif; ?>
-
-            <div class="price-config-box">
-                <div class="section-head compact">
-                    <div>
-                        <span class="admin-kicker">Prix variables</span>
-                        <h2>Paliers de prix selon la duree</h2>
+            <fieldset class="form-section">
+                <legend>Paramètres du régime</legend>
+                <div class="admin-form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Type de régime</label>
+                        <select name="type" class="form-input" required>
+                            <?php $selectedType = old('type', $editingRegime['type'] ?? 'augmentation', 'raw'); ?>
+                            <option value="augmentation" <?= $selectedType === 'augmentation' ? 'selected' : '' ?>>Augmentation de poids</option>
+                            <option value="diminution" <?= $selectedType === 'diminution' ? 'selected' : '' ?>>Diminution de poids</option>
+                        </select>
+                        <?php if (session('errors.type')): ?><small class="form-error">✕ <?= esc(session('errors.type')) ?></small><?php endif; ?>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Variation de poids (kg)</label>
+                        <input type="number" step="0.01" min="0.01" name="variation" class="form-input" value="<?= esc(old('variation', $editingRegime['variation'] ?? '', 'raw')) ?>" required>
+                        <?php if (session('errors.variation')): ?><small class="form-error">✕ <?= esc(session('errors.variation')) ?></small><?php endif; ?>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Durée de base (jours)</label>
+                        <input type="number" min="1" name="duree" class="form-input" value="<?= esc(old('duree', $editingRegime['duree'] ?? 1, 'raw')) ?>" required>
+                        <?php if (session('errors.duree')): ?><small class="form-error">✕ <?= esc(session('errors.duree')) ?></small><?php endif; ?>
                     </div>
                 </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+                <legend>Composition alimentaire</legend>
+                <div class="admin-form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Pourcentage viande (%)</label>
+                        <input type="number" step="0.01" min="0" max="100" name="viande" class="form-input" value="<?= esc(old('viande', $editingRegime['viande'] ?? '', 'raw')) ?>" required>
+                        <?php if (session('errors.viande')): ?><small class="form-error">✕ <?= esc(session('errors.viande')) ?></small><?php endif; ?>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Pourcentage poisson (%)</label>
+                        <input type="number" step="0.01" min="0" max="100" name="poisson" class="form-input" value="<?= esc(old('poisson', $editingRegime['poisson'] ?? '', 'raw')) ?>" required>
+                        <?php if (session('errors.poisson')): ?><small class="form-error">✕ <?= esc(session('errors.poisson')) ?></small><?php endif; ?>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Pourcentage volaille (%)</label>
+                        <input type="number" step="0.01" min="0" max="100" name="volaille" class="form-input" value="<?= esc(old('volaille', $editingRegime['volaille'] ?? '', 'raw')) ?>" required>
+                        <?php if (session('errors.volaille')): ?><small class="form-error">✕ <?= esc(session('errors.volaille')) ?></small><?php endif; ?>
+                    </div>
+                </div>
+                <?php if (session('errors.macros')): ?><small class="form-error">✕ <?= esc(session('errors.macros')) ?></small><?php endif; ?>
+            </fieldset>
+
+            <fieldset class="form-section">
+                <legend>Tarification par durée</legend>
                 <div class="price-config-list" data-price-config-list>
                     <?php foreach ($defaultConfigs as $config): ?>
-                        <div class="price-config-row">
-                            <input type="number" min="1" name="config_duree[]" placeholder="Duree (jours)" value="<?= esc((string) $config[0], 'raw') ?>" required>
-                            <input type="number" min="1" step="0.01" name="config_prix[]" placeholder="Prix (Ar)" value="<?= esc((string) $config[1], 'raw') ?>" required>
+                        <div class="price-config-row form-grid-2">
+                            <input type="number" min="1" name="config_duree[]" placeholder="Durée (jours)" class="form-input" value="<?= esc((string) $config[0], 'raw') ?>" required>
+                            <input type="number" min="1" step="0.01" name="config_prix[]" placeholder="Prix (Ar)" class="form-input" value="<?= esc((string) $config[1], 'raw') ?>" required>
                         </div>
                     <?php endforeach; ?>
                 </div>
-                <button type="button" class="admin-ghost" data-add-price-row>Ajouter un palier</button>
-                <?php if (session('errors.configs')): ?><small class="form-error"><?= esc(session('errors.configs')) ?></small><?php endif; ?>
-            </div>
+                <button type="button" class="btn-secondary" data-add-price-row style="margin-top: 0.8rem;">+ Ajouter un palier</button>
+                <?php if (session('errors.configs')): ?><small class="form-error">✕ <?= esc(session('errors.configs')) ?></small><?php endif; ?>
+            </fieldset>
 
-            <div class="admin-form-actions">
-                <button type="submit" class="admin-btn"><?= $editingRegime ? 'Mettre a jour le regime' : 'Ajouter le regime' ?></button>
+            <div class="form-actions">
+                <button type="submit" class="btn-primary"><?= $editingRegime ? '✓ Mettre à jour' : '✓ Créer le régime' ?></button>
+                <a href="<?= base_url('admin/regimes') ?>" class="btn-ghost">Annuler</a>
             </div>
         </form>
     </div>
 
-    <div class="admin-card" data-reveal="up">
-        <div class="section-head">
-            <div>
-                <span class="admin-kicker">Catalogue</span>
-                <h2>Regimes existants</h2>
-            </div>
+    <!-- Tableau des régimes -->
+    <div class="table-container">
+        <div class="table-header">
+            <h3>Régimes existants</h3>
         </div>
-
-        <div class="table-wrap">
+        <div class="table-responsive">
             <table class="admin-table">
                 <thead>
                     <tr>
                         <th>Description</th>
                         <th>Type</th>
                         <th>Variation</th>
-                        <th>Macros</th>
-                        <th>Prix par duree</th>
+                        <th>Composition (V/P/Vo)</th>
+                        <th>Tarifications</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach (($regimes ?? []) as $regime): ?>
                         <tr>
-                            <td><?= esc($regime['description']) ?></td>
-                            <td><?= esc($regime['type']) ?></td>
-                            <td><?= esc((string) $regime['variation']) ?> kg / <?= esc((string) $regime['duree']) ?> jour(s)</td>
-                            <td>V <?= esc((string) $regime['viande']) ?>% | P <?= esc((string) $regime['poisson']) ?>% | Vo <?= esc((string) $regime['volaille']) ?>%</td>
+                            <td><strong><?= esc($regime['description']) ?></strong></td>
                             <td>
-                                <div class="inline-stack">
+                                <span class="badge <?= $regime['type'] === 'augmentation' ? 'badge-warning' : 'badge-info' ?>">
+                                    <?= $regime['type'] === 'augmentation' ? '▲ Augmentation' : '▼ Diminution' ?>
+                                </span>
+                            </td>
+                            <td><?= esc((string) $regime['variation']) ?> kg / <?= esc((string) $regime['duree']) ?> j</td>
+                            <td><?= number_format((float) $regime['viande'], 1) ?>% / <?= number_format((float) $regime['poisson'], 1) ?>% / <?= number_format((float) $regime['volaille'], 1) ?>%</td>
+                            <td>
+                                <small style="display: block; line-height: 1.4;">
                                     <?php foreach (($regime['configs'] ?? []) as $config): ?>
-                                        <span><?= esc((string) $config['duree_jours']) ?>j : <?= number_format((float) $config['prix'], 0, ',', ' ') ?> Ar</span>
+                                        <span><?= esc((string) $config['duree_jours']) ?>j: <?= number_format((float) $config['prix'], 0, ',', ' ') ?> Ar</span><br>
                                     <?php endforeach; ?>
-                                </div>
+                                </small>
                             </td>
                             <td>
-                                <div class="action-pills">
-                                    <a href="<?= base_url('admin/regimes?edit=' . $regime['id']) ?>">Modifier</a>
-                                    <form method="post" action="<?= base_url('admin/regimes/' . $regime['id'] . '/delete') ?>" onsubmit="return confirm('Supprimer ce regime ?');">
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <a href="<?= base_url('admin/regimes?edit=' . $regime['id']) ?>" class="btn-small btn-view">✏️ Modifier</a>
+                                    <form method="post" action="<?= base_url('admin/regimes/' . $regime['id'] . '/delete') ?>" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr ?');">
                                         <?= csrf_field() ?>
-                                        <button type="submit" class="danger">Supprimer</button>
+                                        <button type="submit" class="btn-small btn-danger" style="color: #e74c3c; background: rgba(231, 76, 60, 0.15);">🗑️ Supprimer</button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                     <?php if (empty($regimes ?? [])): ?>
-                        <tr><td colspan="6">Aucun regime enregistre.</td></tr>
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #999; padding: 2rem;">
+                                Aucun régime enregistré. <br>
+                                <small>Commencez par en créer un ci-dessus.</small>
+                            </td>
+                        </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
         </div>
     </div>
-</section>
+</div>
 
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const addButton = document.querySelector('[data-add-price-row]');
-    const list = document.querySelector('[data-price-config-list]');
-    if (!addButton || !list) return;
-
-    addButton.addEventListener('click', function () {
-        const row = document.createElement('div');
-        row.className = 'price-config-row';
-        row.innerHTML = '<input type="number" min="1" name="config_duree[]" placeholder="Duree (jours)" required><input type="number" min="1" step="0.01" name="config_prix[]" placeholder="Prix (Ar)" required>';
-        list.appendChild(row);
+    document.addEventListener('DOMContentLoaded', function() {
+        const addButton = document.querySelector('[data-add-price-row]');
+        const list = document.querySelector('[data-price-config-list]');
+        
+        if (addButton && list) {
+            addButton.addEventListener('click', function() {
+                const row = document.createElement('div');
+                row.className = 'price-config-row form-grid-2';
+                row.innerHTML = '<input type="number" min="1" name="config_duree[]" placeholder="Durée (jours)" class="form-input" required><input type="number" min="1" step="0.01" name="config_prix[]" placeholder="Prix (Ar)" class="form-input" required>';
+                list.appendChild(row);
+            });
+        }
     });
-});
 </script>
 <?= $this->endSection() ?>
