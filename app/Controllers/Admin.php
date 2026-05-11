@@ -221,9 +221,10 @@ class Admin extends BaseController
     public function finances(): string
     {
         $transactions = $this->transactionModel
-            ->select('transactions.*, users.nom, users.prenom, regimes.description as regime_name')
+            ->select('transactions.*, users.nom, users.prenom, users.email, regimes.description as regime_name')
             ->join('users', 'users.id = transactions.id_user')
-            ->join('regimes', 'regimes.id = transactions.id_regime', 'left')
+            ->join('programmes', 'programmes.id = transactions.id_programme', 'left')
+            ->join('regimes', 'regimes.id = programmes.id_regime', 'left')
             ->orderBy('transactions.id', 'DESC')
             ->findAll() ?? [];
 
