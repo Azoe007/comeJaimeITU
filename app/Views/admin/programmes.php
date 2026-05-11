@@ -2,7 +2,7 @@
 
 <?= $this->section('content') ?>
 
-<div class="admin-page programmes-page">
+<div class="admin-page">
     <!-- Statistiques programmes -->
     <section class="stats-grid-mini">
         <div class="stat-mini-card">
@@ -36,10 +36,9 @@
     </section>
 
     <!-- Tous les programmes -->
-    <section class="programmes-section">
-        <div class="section-header">
-            <h3>Tous les programmes</h3>
-            <div class="section-controls">
+    <div class="page-header" style="margin: 2rem 0 1.5rem;">
+        <h2>Programmes en cours</h2>
+        <div class="header-controls">
                 <input type="text" placeholder="Rechercher..." id="searchProgrammes" class="search-input">
                 <select id="filterRegime" class="filter-select">
                     <option value="">Tous les régimes</option>
@@ -47,9 +46,10 @@
                         <option value="<?= $regime['id'] ?>"><?= esc($regime['description'] ?? 'N/A') ?></option>
                     <?php endforeach; ?>
                 </select>
-            </div>
         </div>
+    </div>
 
+    <div class="table-container">
         <div class="table-responsive">
             <table class="admin-table programmes-table">
                 <thead>
@@ -94,9 +94,12 @@
                 </tbody>
             </table>
         </div>
-    </section>
+    </div>
 </div>
 
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
 <script>
     document.getElementById('searchProgrammes')?.addEventListener('keyup', function(e) {
         const query = e.target.value.toLowerCase();
@@ -117,5 +120,4 @@
         });
     });
 </script>
-
 <?= $this->endSection() ?>

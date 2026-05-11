@@ -2,7 +2,7 @@
 
 <?= $this->section('content') ?>
 
-<div class="admin-page finances-page">
+<div class="admin-page">
     <!-- Statistiques financières -->
     <section class="stats-grid-mini">
         <div class="stat-mini-card">
@@ -36,10 +36,9 @@
     </section>
 
     <!-- Transactions -->
-    <section class="finance-section">
-        <div class="section-header">
-            <h3>Toutes les transactions</h3>
-            <div class="section-filters">
+    <div class="page-header" style="margin: 2rem 0 1.5rem;">
+        <h2>Transactions</h2>
+        <div class="header-controls">
                 <select id="filterTransStatus" class="filter-select">
                     <option value="">Tous les états</option>
                     <option value="valide">Validé</option>
@@ -47,9 +46,10 @@
                     <option value="echec">Échoué</option>
                     <option value="annule">Annulé</option>
                 </select>
-            </div>
         </div>
+    </div>
 
+    <div class="table-container">
         <div class="table-responsive">
             <table class="admin-table transactions-table">
                 <thead>
@@ -135,9 +135,12 @@
                 </tbody>
             </table>
         </div>
-    </section>
+    </div>
 </div>
 
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
 <script>
     document.getElementById('filterTransStatus')?.addEventListener('change', function(e) {
         const status = e.target.value;
@@ -150,5 +153,4 @@
         });
     });
 </script>
-
 <?= $this->endSection() ?>

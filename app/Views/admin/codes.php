@@ -1,38 +1,37 @@
-<?= $this->extend('layouts/admin') ?>
+<?= $this->extend('layouts/back') ?>
 <?= $this->section('content') ?>
 
-<div class="admin-page">
-    <!-- Tableau des codes -->
-    <div class="table-container">
-        <div class="table-header">
-            <h3>Codes de recharge</h3>
-            <span class="view-all-link">Gestion des codes utilisateurs</span>
+<section class="admin-section">
+    <div class="admin-card" data-reveal="up">
+        <div class="section-head">
+            <div>
+                <span class="admin-kicker">Validation des codes</span>
+                <h2>Suivi des recharges utilisateurs</h2>
+            </div>
+            <button class="admin-btn">Valider un lot</button>
         </div>
-        <div class="table-responsive">
+
+        <div class="table-wrap">
             <table class="admin-table">
                 <thead>
                     <tr>
                         <th>Code</th>
                         <th>Valeur</th>
-                        <th>État</th>
+                        <th>Etat</th>
                         <th>Utilisateur</th>
-                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach (($codes ?? []) as $c): ?>
                         <?php
-                            $statusClass = 'badge-success';
-                            $statusLabel = '✓ Disponible';
-                            $statusIcon = '🟢';
+                            $statusClass = 'status-ok';
+                            $statusLabel = 'Disponible';
                             if ((int) $c['id_statut_code'] === 2) {
-                                $statusClass = 'badge-warning';
-                                $statusLabel = '⚠️ Utilisé';
-                                $statusIcon = '🟡';
+                                $statusClass = 'status-warn';
+                                $statusLabel = 'Utilise';
                             } elseif ((int) $c['id_statut_code'] === 3) {
-                                $statusClass = 'badge-danger';
-                                $statusLabel = '❌ Bloqué';
-                                $statusIcon = '🔴';
+                                $statusClass = 'status-danger';
+                                $statusLabel = 'Bloque';
                             }
                             $userLabel = trim(($c['prenom'] ?? '') . ' ' . ($c['nom'] ?? ''));
                             if ($userLabel === '') {
@@ -40,66 +39,21 @@
                             }
                         ?>
                         <tr>
-                            <td>
-                                <code style="background: var(--admin-light); padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.9rem;">
-                                    <?= esc($c['code']) ?>
-                                </code>
-                            </td>
-                            <td><strong><?= number_format((float) $c['valeur_en_ar'], 0, ',', ' ') ?> Ar</strong></td>
-                            <td><span class="badge <?= $statusClass ?>"><?= $statusLabel ?></span></td>
+                            <td><code><?= esc($c['code']) ?></code></td>
+                            <td><?= number_format((float) $c['valeur_en_ar'], 0, ',', ' ') ?> Ar</td>
+                            <td><span class="status-pill <?= $statusClass ?>"><?= $statusLabel ?></span></td>
                             <td><?= esc($userLabel) ?></td>
-                            <td>
-                                <?php if ((int) $c['id_statut_code'] === 1): ?>
-                                    <a href="#" class="btn-small btn-view">📋 Voir</a>
-                                <?php else: ?>
-                                    <small style="color: #999;">Traité</small>
-                                <?php endif; ?>
-                            </td>
                         </tr>
                     <?php endforeach; ?>
                     <?php if (empty($codes ?? [])): ?>
                         <tr>
-                            <td colspan="5" style="text-align: center; color: #999; padding: 2rem;">
-                                Aucun code enregistré
-                            </td>
+                            <td colspan="4">Aucun code pour le moment.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
         </div>
     </div>
-
-    <!-- Statistiques codes -->
-    <section class="stats-grid-mini" style="margin-top: 2rem;">
-        <div class="stat-mini-card">
-            <div class="stat-icon">🎟️</div>
-            <div class="stat-content">
-                <span class="label">Total codes</span>
-                <span class="value"><?= count($codes ?? []) ?></span>
-            </div>
-        </div>
-        <div class="stat-mini-card">
-            <div class="stat-icon">✓</div>
-            <div class="stat-content">
-                <span class="label">Codes disponibles</span>
-                <span class="value"><?= count(array_filter($codes ?? [], fn($c) => (int) $c['id_statut_code'] === 1)) ?></span>
-            </div>
-        </div>
-        <div class="stat-mini-card">
-            <div class="stat-icon">✓✓</div>
-            <div class="stat-content">
-                <span class="label">Codes utilisés</span>
-                <span class="value"><?= count(array_filter($codes ?? [], fn($c) => (int) $c['id_statut_code'] === 2)) ?></span>
-            </div>
-        </div>
-        <div class="stat-mini-card">
-            <div class="stat-icon">❌</div>
-            <div class="stat-content">
-                <span class="label">Codes bloqués</span>
-                <span class="value"><?= count(array_filter($codes ?? [], fn($c) => (int) $c['id_statut_code'] === 3)) ?></span>
-            </div>
-        </div>
-    </section>
-</div>
+</section>
 
 <?= $this->endSection() ?>

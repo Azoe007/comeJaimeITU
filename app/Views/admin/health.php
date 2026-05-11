@@ -2,7 +2,7 @@
 
 <?= $this->section('content') ?>
 
-<div class="admin-page health-page">
+<div class="admin-page">
     <!-- Statistiques santé -->
     <section class="stats-grid-mini">
         <div class="stat-mini-card">
@@ -36,10 +36,9 @@
     </section>
 
     <!-- Historique santé -->
-    <section class="health-section">
-        <div class="section-header">
-            <h3>Données de santé enregistrées</h3>
-            <div class="section-controls">
+    <div class="page-header" style="margin: 2rem 0 1.5rem;">
+        <h2>Données de santé</h2>
+        <div class="header-controls">
                 <input type="text" placeholder="Rechercher utilisateur..." id="searchHealth" class="search-input">
             </div>
         </div>
@@ -92,7 +91,7 @@
     </section>
 
     <!-- Objectifs -->
-    <section class="health-section">
+    <div style="margin-top: 2rem;">
         <div class="section-header">
             <h3>Objectifs santé</h3>
         </div>
@@ -134,9 +133,12 @@
                 </tbody>
             </table>
         </div>
-    </section>
+    </div>
 </div>
 
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
 <script>
     document.getElementById('searchHealth')?.addEventListener('keyup', function(e) {
         const query = e.target.value.toLowerCase();
@@ -146,5 +148,4 @@
         });
     });
 </script>
-
 <?= $this->endSection() ?>

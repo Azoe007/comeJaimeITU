@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= base_url('assets/css/admin-dashboard.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/admin-forms.css') ?>">
 </head>
 <body class="admin-layout">
     <!-- Sidebar -->
