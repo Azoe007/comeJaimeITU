@@ -26,7 +26,7 @@
             <div class="stat-info">
                 <span class="stat-label">Transactions</span>
                 <span class="stat-value"><?= number_format($stats['total_transactions']) ?></span>
-                <span class="stat-change">Valides : ✓</span>
+                <span class="stat-change"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:4px"><polyline points="20 6 9 17 4 12"/></svg> Valides</span>
             </div>
         </div>
 

@@ -6,28 +6,50 @@
     <!-- Statistiques financières -->
     <section class="stats-grid-mini">
         <div class="stat-mini-card">
-            <div class="stat-icon">💰</div>
+            <div class="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+            </div>
             <div class="stat-content">
                 <span class="label">Revenu total</span>
                 <span class="value"><?= number_format($stats['revenue_total'], 0) ?> Ar</span>
             </div>
         </div>
         <div class="stat-mini-card">
-            <div class="stat-icon">⏳</div>
+            <div class="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                </svg>
+            </div>
             <div class="stat-content">
                 <span class="label">En attente</span>
                 <span class="value"><?= number_format($stats['pending_revenue'], 0) ?> Ar</span>
             </div>
         </div>
         <div class="stat-mini-card">
-            <div class="stat-icon">❌</div>
+            <div class="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="15" y1="9" x2="9" y2="15"/>
+                    <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+            </div>
             <div class="stat-content">
                 <span class="label">Transactions échouées</span>
                 <span class="value"><?= $stats['failed_transactions'] ?></span>
             </div>
         </div>
         <div class="stat-mini-card">
-            <div class="stat-icon">👛</div>
+            <div class="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="18" r="1"/>
+                    <path d="M6 11a6 6 0 0 1 12 0"/>
+                    <path d="M5.5 8a7 7 0 0 1 13 0"/>
+                    <path d="M4.5 5a8 8 0 0 1 15 0"/>
+                </svg>
+            </div>
             <div class="stat-content">
                 <span class="label">Solde total portefeuilles</span>
                 <span class="value"><?= number_format($stats['total_wallets_balance'], 0) ?> Ar</span>

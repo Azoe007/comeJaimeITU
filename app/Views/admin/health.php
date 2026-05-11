@@ -6,28 +6,45 @@
     <!-- Statistiques santé -->
     <section class="stats-grid-mini">
         <div class="stat-mini-card">
-            <div class="stat-icon">⚖️</div>
+            <div class="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9h18v2H3zm0 4h18v2H3zm0-8h18v2H3z"/>
+                </svg>
+            </div>
             <div class="stat-content">
                 <span class="label">Poids moyen</span>
                 <span class="value"><?= number_format($stats['avg_weight'], 1) ?> kg</span>
             </div>
         </div>
         <div class="stat-mini-card">
-            <div class="stat-icon">📏</div>
+            <div class="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v20"/>
+                    <path d="M8 6h8M8 18h8"/>
+                </svg>
+            </div>
             <div class="stat-content">
                 <span class="label">Taille moyenne</span>
                 <span class="value"><?= number_format($stats['avg_height'], 1) ?> cm</span>
             </div>
         </div>
         <div class="stat-mini-card">
-            <div class="stat-icon">📈</div>
+            <div class="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12h4l4-8 4 8h4M3 16h18"/>
+                </svg>
+            </div>
             <div class="stat-content">
                 <span class="label">Poids max</span>
                 <span class="value"><?= number_format($stats['max_weight'], 1) ?> kg</span>
             </div>
         </div>
         <div class="stat-mini-card">
-            <div class="stat-icon">📉</div>
+            <div class="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12h4l4 8 4-8h4M3 8h18"/>
+                </svg>
+            </div>
             <div class="stat-content">
                 <span class="label">Poids min</span>
                 <span class="value"><?= number_format($stats['min_weight'], 1) ?> kg</span>

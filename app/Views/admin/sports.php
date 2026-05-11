@@ -48,7 +48,7 @@
             </fieldset>
 
             <div class="form-actions">
-                <button type="submit" class="btn-primary"><?= $editingSport ? '✓ Mettre à jour' : '✓ Créer l\'activité' ?></button>
+                <button type="submit" class="btn-primary"><?= $editingSport ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:6px"><polyline points="20 6 9 17 4 12"/></svg> Mettre à jour' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:6px"><polyline points="20 6 9 17 4 12"/></svg> Créer l\'activité' ?></button>
                 <a href="<?= base_url('admin/sports') ?>" class="btn-ghost">Annuler</a>
             </div>
         </form>
@@ -76,17 +76,19 @@
                             <td><strong><?= esc($sport['description']) ?></strong></td>
                             <td>
                                 <span class="badge badge-success">
-                                    📉 <?= number_format((float) $sport['diminution_poids'], 2) ?> kg/sem
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:4px">
+                                        <path d="M3 12h4l4 8 4-8h4M3 8h18"/>
+                                    </svg> <?= number_format((float) $sport['diminution_poids'], 2) ?> kg/sem
                                 </span>
                             </td>
                             <td><?= number_format((int) $sport['frequence']) ?>x/semaine</td>
                             <td><?= number_format((int) $sport['duree']) ?> jours</td>
                             <td>
                                 <div style="display: flex; gap: 0.5rem;">
-                                    <a href="<?= base_url('admin/sports?edit=' . $sport['id']) ?>" class="btn-small btn-view">✏️ Modifier</a>
+                                    <a href="<?= base_url('admin/sports?edit=' . $sport['id']) ?>" class="btn-small btn-view"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:4px"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L21 3z"/></svg> Modifier</a>
                                     <form method="post" action="<?= base_url('admin/sports/' . $sport['id'] . '/delete') ?>" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr ?');">
                                         <?= csrf_field() ?>
-                                        <button type="submit" class="btn-small btn-danger" style="color: #e74c3c; background: rgba(231, 76, 60, 0.15);">🗑️ Supprimer</button>
+                                        <button type="submit" class="btn-small btn-danger" style="color: #e74c3c; background: rgba(231, 76, 60, 0.15);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:4px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg> Supprimer</button>
                                     </form>
                                 </div>
                             </td>
